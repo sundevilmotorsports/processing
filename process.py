@@ -1,4 +1,4 @@
-# commit hash e4d2eb5
+# commit hash 624a240
 from transfer import linearPotentiometer, brakePressure
 
 def parseBenjiFile(number: int):
@@ -24,30 +24,32 @@ def parseBenjiFile(number: int):
                 data = f.read(2) # rear brake pressure
                 if data is None:
                     break
-                rbp = brakePressure(int.from_bytes(data, "little"))
+                rbp = brakePressure(int.from_bytes(data, "big"))
 
                 data = f.read(2) # steering
                 if data is None:
                     break
-                ain2 = brakePressure(int.from_bytes(data, "big"))
-
-                data = f.read(2) # fr shock
-                if data is None:
-                    break
+                steer = brakePressure(int.from_bytes(data, "big"))
 
                 data = f.read(2) # fl shock
                 if data is None:
                     break
+                fls = linearPotentiometer(int.from_bytes(data, "big"))
 
-                data = f.read(2) # rl shock
+                data = f.read(2) # fr shock
                 if data is None:
                     break
-                rl = linearPotentiometer(int.from_bytes(data, "big"))
+                frs = linearPotentiometer(int.from_bytes(data, "big"))
 
                 data = f.read(2) # rr shock
                 if data is None:
                     break
-                rr = linearPotentiometer(int.from_bytes(data, "little"))
+                rrs = linearPotentiometer(int.from_bytes(data, "big"))
+
+                data = f.read(2) # rl shock
+                if data is None:
+                    break
+                rls = linearPotentiometer(int.from_bytes(data, "big"))
 
                 data = f.read(2) # current draw
                 if data is None:
@@ -74,11 +76,113 @@ def parseBenjiFile(number: int):
                     break
                 zAccel  = int.from_bytes(data, "big", signed=True)
 
-                data = f.read(8) # placeholder
+                data = f.read(4) # x acce
                 if data is None:
                     break
+                xGyro  = int.from_bytes(data, "big", signed=True)
 
-                
+                data = f.read(4) # y acce
+                if data is None:
+                    break
+                yGyro = int.from_bytes(data, "big", signed=True)
+
+                data = f.read(4) # z acce
+                if data is None:
+                    break
+                zGyro = int.from_bytes(data, "big", signed=True)
+
+
+                data = f.read(2) # strain gauges
+                if data is None:
+                    break
+                frsg = int.from_bytes(data, "big")
+
+                data = f.read(2)
+                if data is None:
+                    break
+                flsg = int.from_bytes(data, "big")
+
+                data = f.read(2)
+                if data is None:
+                    break
+                rlsg = int.from_bytes(data, "big")
+
+                data = f.read(2)
+                if data is None:
+                    break
+                rrsg = int.from_bytes(data, "big")
+
+                # fl wheel 
+                data = f.read(2)
+                if data is None:
+                    break
+                flw_amb = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                flw_rtr = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                flw_rpm = int.from_bytes(data, "big")
+
+                # fr wheel 
+                data = f.read(2)
+                if data is None:
+                    break
+                frw_amb = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                frw_rtr = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                frw_rpm = int.from_bytes(data, "big")
+
+                # rr wheel 
+                data = f.read(2)
+                if data is None:
+                    break
+                rrw_amb = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                rrw_rtr = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                rrw_rpm = int.from_bytes(data, "big")
+
+                # rl wheel 
+                data = f.read(2)
+                if data is None:
+                    break
+                rlw_amb = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                rlw_rtr = mlx90614(int.from_bytes(data, "big"))
+
+                data = f.read(2)
+                if data is None:
+                    break
+                rlw_rpm = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                test_no = int.from_bytes(data, "big")
+
+
+                # read timestamp for next row
                 data = f.read(4)
 
                 csv.write(str(time/1000) + "," + str(fbp) + "," + str(rbp) + "," + 

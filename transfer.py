@@ -9,4 +9,6 @@ def brakePressure(adcValue: int):
 
 def linearPotentiometer(adcValue: int):
     return 0.014 * adcValue - 2.772
-    
+
+def mlx90614(adcValue: int):
+    return (adcValue * 0.02) - 273.15
