@@ -1,12 +1,24 @@
 # commit hash 624a240
-from transfer import linearPotentiometer, brakePressure
+from transfer import linearPotentiometer, brakePressure, mlx90614, steering
 
 def parseBenjiFile(number: int):
     binary_name = "raw/data" + str(number) + ".benji"
     csv_name = "processed/data" + str(number) + ".csv"
     with open(binary_name, 'br') as f:
         with open(csv_name, 'w') as csv:
-            csv.write("time (s),f brake pressure (bar),r brake pressure (bar),rl shock position (mm),rr shock position (mm),current draw(mA),battery (V),longitudinal accel (mG),lateral accel (mG), graivty (mG), ain2 (adc)\n")
+            csv.write(
+                    "time (s)," + "test number," +
+                    "f brake pressure (bar),r brake pressure (bar),steering (degrees)," +
+                    "fl shock position (mm), fr shock position (mm),rr shock position (mm),rl shock position (mm)," +
+                    "current draw (mA),battery (V)," + 
+                    "longitudinal accel (mG),lateral accel (mG), graivty (mG)," +
+                    "xgyro (mdps),ygyro (mdps),zgyro (mdps)," +
+                    "flsg (adc),frsg (adc),rrsg (adc),rlsg (adc)," +
+                    "fl wheel ambient temp (C),fl rotor temp (C),fl wheel speed (rpm)," +
+                    "fr wheel ambient temp (C),fr rotor temp (C),fr wheel speed (rpm)," +
+                    "rr wheel ambient temp (C),rr rotor temp (C),rr wheel speed (rpm)," +
+                    "rl wheel ambient temp (C),rl rotor temp (C),rl wheel speed (rpm)," +
+                    "\n")
             data = f.read(4)
             init = int.from_bytes(data, "big")
             last = init
@@ -29,7 +41,7 @@ def parseBenjiFile(number: int):
                 data = f.read(2) # steering
                 if data is None:
                     break
-                steer = brakePressure(int.from_bytes(data, "big"))
+                steer = steering(int.from_bytes(data, "big"))
 
                 data = f.read(2) # fl shock
                 if data is None:
@@ -76,21 +88,20 @@ def parseBenjiFile(number: int):
                     break
                 zAccel  = int.from_bytes(data, "big", signed=True)
 
-                data = f.read(4) # x acce
+                data = f.read(4) # x gyro
                 if data is None:
                     break
                 xGyro  = int.from_bytes(data, "big", signed=True)
 
-                data = f.read(4) # y acce
+                data = f.read(4) # y gyro
                 if data is None:
                     break
                 yGyro = int.from_bytes(data, "big", signed=True)
 
-                data = f.read(4) # z acce
+                data = f.read(4) # z gyro
                 if data is None:
                     break
                 zGyro = int.from_bytes(data, "big", signed=True)
-
 
                 data = f.read(2) # strain gauges
                 if data is None:
@@ -197,5 +208,3 @@ def parseBenjiFile(number: int):
 
 # useful files: 81,82,83,84,85,86
 #parseBenjiFile(85)
-for i in range(81, 87):
-    parseBenjiFile(i)
