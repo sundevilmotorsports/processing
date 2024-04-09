@@ -14,4 +14,4 @@ def mlx90614(adcValue: int):
     return (adcValue * 0.02) - 273.15
 
 def steering(adcValue: int):
-    return adcValue
+    return (adcValue - 2304) / 11.078

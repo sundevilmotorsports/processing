@@ -1,9 +1,9 @@
 # commit hash 624a240
 from transfer import linearPotentiometer, brakePressure, mlx90614, steering
 
-def parseBenjiFile(number: int):
-    binary_name = "raw/data" + str(number) + ".benji"
-    csv_name = "processed/data" + str(number) + ".csv"
+def parseBenjiFile(number: int, path: str, session: str):
+    binary_name = path + "data" + str(number) + ".benji"
+    csv_name = "processed/" + session + "/data" + str(number) + ".csv"
     with open(binary_name, 'br') as f:
         with open(csv_name, 'w') as csv:
             csv.write(
@@ -11,7 +11,7 @@ def parseBenjiFile(number: int):
                     "f brake pressure (bar),r brake pressure (bar),steering (degrees)," +
                     "fl shock position (mm), fr shock position (mm),rr shock position (mm),rl shock position (mm)," +
                     "current draw (mA),battery (V)," + 
-                    "longitudinal accel (mG),lateral accel (mG), graivty (mG)," +
+                    "longitudinal accel (mG),lateral accel (mG), gravity (mG)," +
                     "xgyro (mdps),ygyro (mdps),zgyro (mdps)," +
                     "flsg (adc),frsg (adc),rrsg (adc),rlsg (adc)," +
                     "fl wheel ambient temp (C),fl rotor temp (C),fl wheel speed (rpm)," +
@@ -196,15 +196,32 @@ def parseBenjiFile(number: int):
                 # read timestamp for next row
                 data = f.read(4)
 
-                csv.write(str(time/1000) + "," + str(fbp) + "," + str(rbp) + "," + 
-                            str(rl) + "," + str(rr) + "," + 
+                csv.write(str(time/1000) + "," + str(test_no) + "," + str(fbp) + "," + str(rbp) + "," + str(steer) + "," + 
+                            str(fls) + "," + str(frs) + "," + str(rrs) + "," + str(rls) + "," + 
                             str(current) + "," + str(battery) + "," + 
-                            str(yAccel) + "," + str(xAccel) + "," + str(zAccel) + "," + str(ain2) +
+                            str(yAccel) + "," + str(xAccel) + "," + str(zAccel) + "," +
+                            str(xGyro) + "," + str(yGyro) + "," + str(zGyro) + "," +
+                            str(flsg) + "," + str(frsg) + "," + str(rrsg) + "," + str(rlsg) + "," +
+                            str(flw_amb) + "," + str(flw_rtr) + "," + str(flw_rpm) + "," +
+                            str(frw_amb) + "," + str(frw_rtr) + "," + str(frw_rpm) + "," +
+                            str(rrw_amb) + "," + str(rrw_rtr) + "," + str(rrw_rpm) + "," +
+                            str(rlw_amb) + "," + str(rlw_rtr) + "," + str(rlw_rpm) + "," +
                             "\n")
             
             print("run length: " + str(last) + " ms")
             print(str(1000/((last-init)/count)) + " Hz")
 
 
-# useful files: 81,82,83,84,85,86
-#parseBenjiFile(85)
+print("evening")
+for i in range(180, 200):
+    parseBenjiFile(i, "data/240407/evening/", "evening")
+
+print("matt et al")
+for i in range(163, 180):
+    if i == 164:
+        continue
+    parseBenjiFile(i, "data/240407/matt et al/", "matt-et-al")
+
+print("shakedown")
+for i in range(132, 160):
+    parseBenjiFile(i, "data/240407/shakedown/", "shakedown")
