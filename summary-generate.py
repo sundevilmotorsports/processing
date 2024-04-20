@@ -45,8 +45,8 @@ def generate_summary(path: str, session: str, day: str):
     print("steering left:", end="")
     print(df["steering (degrees)"].min())
 
-    print("# of tests: ", end="")
-    print(df["test number"].max())
+    print("current draw (mA): ", end="")
+    print(df["current draw (mA)"].describe())
     print("")
     return df["time (s)"].max(), df["longitudinal accel (mG)"].max()
 
