@@ -1,5 +1,5 @@
 # commit hash 624a240
-from transfer import linearPotentiometer, brakePressure, mlx90614, steering
+from transfer import linearPotentiometer, brakePressure, mlx90614, steering, fr_sg, fl_sg, rl_sg
 
 def parseBenjiFile(number: int, path: str, session: str):
     binary_name = path + "data" + str(number) + ".benji"
@@ -9,11 +9,11 @@ def parseBenjiFile(number: int, path: str, session: str):
             csv.write(
                     "time (s)," + "test number," +
                     "f brake pressure (bar),r brake pressure (bar),steering (degrees)," +
-                    "fl shock position (mm), fr shock position (mm),rr shock position (mm),rl shock position (mm)," +
+                    "fl shock position (mm),fr shock position (mm),rr shock position (mm),rl shock position (mm)," +
                     "current draw (mA),battery (V)," + 
                     "longitudinal accel (mG),lateral accel (mG), gravity (mG)," +
                     "xgyro (mdps),ygyro (mdps),zgyro (mdps)," +
-                    "flsg (adc),frsg (adc),rrsg (adc),rlsg (adc)," +
+                    "flsg (lbs),frsg (lbs),rrsg (adc),rlsg (lbs)," +
                     "fl wheel ambient temp (C),fl rotor temp (C),fl wheel speed (rpm)," +
                     "fr wheel ambient temp (C),fr rotor temp (C),fr wheel speed (rpm)," +
                     "rr wheel ambient temp (C),rr rotor temp (C),rr wheel speed (rpm)," +
@@ -106,17 +106,17 @@ def parseBenjiFile(number: int, path: str, session: str):
                 data = f.read(2) # strain gauges
                 if data is None:
                     break
-                frsg = int.from_bytes(data, "big")
+                frsg = fr_sg(int.from_bytes(data, "big"))
 
                 data = f.read(2)
                 if data is None:
                     break
-                flsg = int.from_bytes(data, "big")
+                flsg = fl_sg(int.from_bytes(data, "big"))
 
                 data = f.read(2)
                 if data is None:
                     break
-                rlsg = int.from_bytes(data, "big")
+                rlsg = rl_sg(int.from_bytes(data, "big"))
 
                 data = f.read(2)
                 if data is None:
@@ -212,16 +212,16 @@ def parseBenjiFile(number: int, path: str, session: str):
             print(str(1000/((last-init)/count)) + " Hz")
 
 
-print("evening")
-for i in range(180, 200):
-    parseBenjiFile(i, "data/240407/evening/", "evening")
+print("accel")
+for i in range(69, 70):
+    parseBenjiFile(i, "data/240419/raw/accel/", "accel")
 
-print("matt et al")
-for i in range(163, 180):
+print("aero coastdown")
+for i in range(72, 74):
     if i == 164:
         continue
-    parseBenjiFile(i, "data/240407/matt et al/", "matt-et-al")
+    parseBenjiFile(i, "data/240419/raw/coastdown-aero/", "coastdown-aero")
 
-print("shakedown")
-for i in range(132, 160):
-    parseBenjiFile(i, "data/240407/shakedown/", "shakedown")
+print("everything else")
+for i in range(60, 75):
+    parseBenjiFile(i, "data/240419/raw/everything/", "everything")

@@ -15,3 +15,12 @@ def mlx90614(adcValue: int):
 
 def steering(adcValue: int):
     return (adcValue - 2304) / 11.078
+
+def fr_sg(adcValue: int):
+    return -(4.7 / 9.24) * (adcValue - 63608)
+
+def fl_sg(adcValue: int):
+    return (4.7 / 10) * (adcValue - 1432)
+
+def rl_sg(adcValue: int):
+    return (4.7 / 7.3) * (adcValue - 931)

@@ -9,18 +9,18 @@ def generate_report(path: str, session: str, day: str, runno: str):
 
     # G-G diagram
     axis[0, 0].grid(visible=True)
-    axis[0, 0].set_xlim(-1200, 1200)
-    axis[0, 0].set_ylim(-1200, 1200)
+    axis[0, 0].set_xlim(-1600, 1600)
+    axis[0, 0].set_ylim(-1600, 1600)
     axis[0, 0].set_xlabel("Lateral Acceleration (mG)")
     axis[0, 0].set_ylabel("Longitudinal Acceleration (mG)")
-    axis[0, 0].scatter(df["lateral accel (mG)"], df["longitudinal accel (mG)"], s=5)
+    axis[0, 0].scatter(df["lateral accel (mG)"], df["longitudinal accel (mG)"], s=1)
     axis[0, 0].set_title("G-G Diagram")
 
     # Braking vs Rear Brake Pressure
     axis[1, 0].set_ylim(-1200, 100)
     axis[1, 0].set_xlabel("Rear Brake Pressure (bar)")
     axis[1, 0].set_ylabel("Longitudinal Acceleration (mG)")
-    axis[1, 0].scatter(df["r brake pressure (bar)"], df["longitudinal accel (mG)"], s=5)
+    axis[1, 0].scatter(df["r brake pressure (bar)"], df["longitudinal accel (mG)"], s=1)
     axis[1, 0].set_title("Rear Brake Pressure")
 
     # IMU vs Time
@@ -42,40 +42,34 @@ def generate_report(path: str, session: str, day: str, runno: str):
         axis[0, 2].legend()
 
     # Shock Displacement vs Time
-    flsz = df["fl shock position (mm)"].head(1000).median()
-    frsz = df[" fr shock position (mm)"].head(1000).median()
-    rrsz = df["rr shock position (mm)"].head(1000).median()
-    rlsz = df["rl shock position (mm)"].head(1000).median()
-    df["fl displacement"] = df["fl shock position (mm)"] - flsz
-    df["fr displacement"] = df[" fr shock position (mm)"] - frsz
-    df["rr displacement"] = df["rr shock position (mm)"] - rrsz
-    df["rl displacement"] = df["rl shock position (mm)"] - rlsz
     axis[1, 1].set_title("Shock Displacement")
     axis[1, 1].set_xlabel("Time (s)")
     axis[1, 1].set_ylabel("Displacement (mm)")
-    axis[1, 1].plot(df["time (s)"], df["fl displacement"], label="FL")
-    axis[1, 1].plot(df["time (s)"], df["fr displacement"], label="FR")
-    axis[1, 1].plot(df["time (s)"], df["rr displacement"], label="RR")
-    axis[1, 1].plot(df["time (s)"], df["rl displacement"], label="RL")
+    axis[1, 1].plot(df["time (s)"], df["fl displacement (mm)"], label="FL")
+    axis[1, 1].plot(df["time (s)"], df["fr displacement (mm)"], label="FR")
+    axis[1, 1].plot(df["time (s)"], df["rr displacement (mm)"], label="RR")
+    axis[1, 1].plot(df["time (s)"], df["rl displacement (mm)"], label="RL")
     axis[1, 1].legend()
-    
 
-    plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
+    # wheel RPM vs Time
+    axis[1, 2].set_title("wheel RPM")
+    axis[1, 2].set_xlabel("Time (s)")
+    axis[1, 2].set_ylabel("Wheel Speed (RPM)")
+    axis[1, 2].plot(df["time (s)"], df["fl wheel speed (rpm)"], label="FL")
+    axis[1, 2].plot(df["time (s)"], df["fr wheel speed (rpm)"], label="FR")
+
+    ax2 = axis[1,2].twinx()
+    ax2.set_ylabel("test number", color="tab:red")
+    ax2.plot(df["time (s)"], df["test number"], 'r')
+
+    axis[1, 2].legend()
+    plt.show()
+    #plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
 
 
-# evening
-print("evening")
-for i in range(180, 200):
-    generate_report("processed/240407/evening/data" + str(i) + ".csv", "evening", "240407", str(i))
+"""print("shakedown")
+for i in range(64, 67):
+    generate_report("processed/everything/data" + str(i) + ".csv", "accel", "240419", str(i))
+"""
 
-# shakedown
-print("shakedown")
-for i in range(136, 160):
-    generate_report("processed/240407/shakedown/data" + str(i) + ".csv", "shakedown", "240407", str(i))
-
-# matt autox
-print("matt")
-for i in range(163, 180):
-    if i == 164:
-        continue
-    generate_report("processed/240407/matt-et-al/data" + str(i) + ".csv", "matt-et-al", "240407", str(i))
+generate_report("processed/everything/data69.csv", "ff", "aa", 69)

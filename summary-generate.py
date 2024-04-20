@@ -28,7 +28,7 @@ def generate_summary(path: str, session: str, day: str):
     print(df["fr rotor temp (C)"].max())
 
     print("FR shock travel range (mm): ", end="")
-    print(df[" fr shock position (mm)"].max() - df[" fr shock position (mm)"].min())
+    print(df["fr shock position (mm)"].max() - df["fr shock position (mm)"].min())
 
     print("FL shock travel range (mm): ", end="")
     print(df["fl shock position (mm)"].max() - df["fl shock position (mm)"].min())
@@ -38,6 +38,15 @@ def generate_summary(path: str, session: str, day: str):
 
     print("RR shock travel range (mm): ", end="")
     print(df["rr shock position (mm)"].max() - df["rr shock position (mm)"].min())
+
+    print("steering right:", end="")
+    print(df["steering (degrees)"].max())
+
+    print("steering left:", end="")
+    print(df["steering (degrees)"].min())
+
+    print("# of tests: ", end="")
+    print(df["test number"].max())
     print("")
     return df["time (s)"].max(), df["longitudinal accel (mG)"].max()
 
@@ -46,8 +55,8 @@ def generate_summary(path: str, session: str, day: str):
 longruns = []
 inertial = []
 print("shakedown summaries")
-for i in range(132, 160):
-    length, accel = generate_summary("processed/240407/shakedown/data" + str(i) + ".csv", "evening", "240407")
+for i in range(60, 75):
+    length, accel = generate_summary("processed/everything/data" + str(i) + ".csv", "evening", "240407")
     if length > 120:
         longruns.append(i)
     if accel > 100:
@@ -58,3 +67,4 @@ print(longruns)
 
 print("runs with > 100mG of accel: ", end="")
 print(inertial)
+
