@@ -1,4 +1,4 @@
-# commit hash 624a240
+# commit hash 20321ad 240424
 from transfer import linearPotentiometer, brakePressure, mlx90614, steering, fr_sg, fl_sg, rl_sg
 
 def parseBenjiFile(number: int, path: str, session: str):
@@ -18,6 +18,8 @@ def parseBenjiFile(number: int, path: str, session: str):
                     "fr wheel ambient temp (C),fr rotor temp (C),fr wheel speed (rpm)," +
                     "rr wheel ambient temp (C),rr rotor temp (C),rr wheel speed (rpm)," +
                     "rl wheel ambient temp (C),rl rotor temp (C),rl wheel speed (rpm)," +
+                    "drs status,brake fluid temp (C),throttle load (adc)," +
+                    "gps fix,gps longitude,gps latitude,gps speed (m/s)" +
                     "\n")
             data = f.read(4)
             init = int.from_bytes(data, "big")
@@ -187,6 +189,49 @@ def parseBenjiFile(number: int, path: str, session: str):
                     break
                 rlw_rpm = int.from_bytes(data, "big")
 
+                # read brake fluid
+                data = f.read(2)
+                if data is None:
+                    break
+                brake_fluid = int.from_bytes(data, "big")
+
+                # throttle load
+                data = f.read(2)
+                if data is None:
+                    break
+                throttle_load = int.from_bytes(data, "big")        
+
+                # brake load, unused atm
+                data = f.read(2)
+
+                # drs
+                data = f.read(1)
+                if data is None:
+                    break
+                drs = int.from_bytes(data, "big")
+
+                # gps lon / lat / speed / fix
+                data = f.read(4)
+                if data is None:
+                    break
+                gps_lon = int.from_bytes(data, "big") / 10000000
+
+                data = f.read(4)
+                if data is None:
+                    break
+                gps_lat = int.from_bytes(data, "big") / 10000000
+
+                data = f.read(4)
+                if data is None:
+                    break
+                gps_spd = int.from_bytes(data, "big") / 1000
+
+                data = f.read(1)
+                if data is None:
+                    break
+                gps_fix = int.from_bytes(data, "big")
+
+                # test number
                 data = f.read(1)
                 if data is None:
                     break
@@ -206,9 +251,11 @@ def parseBenjiFile(number: int, path: str, session: str):
                             str(frw_amb) + "," + str(frw_rtr) + "," + str(frw_rpm) + "," +
                             str(rrw_amb) + "," + str(rrw_rtr) + "," + str(rrw_rpm) + "," +
                             str(rlw_amb) + "," + str(rlw_rtr) + "," + str(rlw_rpm) + "," +
+                            str(drs) + "," + str(brake_fluid) + "," + str(throttle_load) + "," + 
+                            str(gps_fix) + "," + str(gps_lon) + "," + str(gps_lat) + "," + str(gps_spd) +
                             "\n")
             
-            print("run length: " + str(last) + " ms")
+            print("run length: " + str(last/1000) + " s")
             print(str(1000/((last-init)/count)) + " Hz")
 
 
