@@ -35,5 +35,5 @@ def owo(path):
     df.to_csv(path)
 
 
-for i in range(60, 75):
-    owo("processed/everything/data" +str(i) +".csv")
+#for i in range(60, 75):
+#    owo("processed/everything/data" +str(i) +".csv")

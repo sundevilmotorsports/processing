@@ -45,10 +45,10 @@ def generate_report(path: str, session: str, day: str, runno: str):
     axis[1, 1].set_title("Shock Displacement")
     axis[1, 1].set_xlabel("Time (s)")
     axis[1, 1].set_ylabel("Displacement (mm)")
-    axis[1, 1].plot(df["time (s)"], df["fl displacement (mm)"], label="FL")
-    axis[1, 1].plot(df["time (s)"], df["fr displacement (mm)"], label="FR")
-    axis[1, 1].plot(df["time (s)"], df["rr displacement (mm)"], label="RR")
-    axis[1, 1].plot(df["time (s)"], df["rl displacement (mm)"], label="RL")
+    #axis[1, 1].plot(df["time (s)"], df["fl displacement (mm)"], label="FL")
+    #axis[1, 1].plot(df["time (s)"], df["fr displacement (mm)"], label="FR")
+    #axis[1, 1].plot(df["time (s)"], df["rr displacement (mm)"], label="RR")
+    #axis[1, 1].plot(df["time (s)"], df["rl displacement (mm)"], label="RL")
     axis[1, 1].legend()
 
     # wheel RPM vs Time
@@ -63,8 +63,8 @@ def generate_report(path: str, session: str, day: str, runno: str):
     ax2.plot(df["time (s)"], df["test number"], 'r')
 
     axis[1, 2].legend()
-    plt.show()
-    #plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
+    #plt.show()
+    plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
 
 
 """print("shakedown")
@@ -72,4 +72,6 @@ for i in range(64, 67):
     generate_report("processed/everything/data" + str(i) + ".csv", "accel", "240419", str(i))
 """
 
-generate_report("processed/everything/data69.csv", "ff", "aa", 69)
+#generate_report("processed/240426/data127.csv", "ff", "aa", 69)
+for i in range(115, 128):
+    generate_report("processed/240426/data" + str(i) + ".csv", "hehe", "240426", str(i))

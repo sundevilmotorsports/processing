@@ -1,5 +1,6 @@
 # commit hash 20321ad 240424
 from transfer import linearPotentiometer, brakePressure, mlx90614, steering, fr_sg, fl_sg, rl_sg
+from sus import owo as shock_vel
 
 def parseBenjiFile(number: int, path: str, session: str):
     binary_name = path + "data" + str(number) + ".benji"
@@ -11,7 +12,7 @@ def parseBenjiFile(number: int, path: str, session: str):
                     "f brake pressure (bar),r brake pressure (bar),steering (degrees)," +
                     "fl shock position (mm),fr shock position (mm),rr shock position (mm),rl shock position (mm)," +
                     "current draw (mA),battery (V)," + 
-                    "longitudinal accel (mG),lateral accel (mG), gravity (mG)," +
+                    "longitudinal accel (mG),lateral accel (mG),gravity (mG)," +
                     "xgyro (mdps),ygyro (mdps),zgyro (mdps)," +
                     "flsg (lbs),frsg (lbs),rrsg (adc),rlsg (lbs)," +
                     "fl wheel ambient temp (C),fl rotor temp (C),fl wheel speed (rpm)," +
@@ -257,18 +258,8 @@ def parseBenjiFile(number: int, path: str, session: str):
             
             print("run length: " + str(last/1000) + " s")
             print(str(1000/((last-init)/count)) + " Hz")
+    shock_vel(csv_name)
+            
 
 
-print("accel")
-for i in range(69, 70):
-    parseBenjiFile(i, "data/240419/raw/accel/", "accel")
-
-print("aero coastdown")
-for i in range(72, 74):
-    if i == 164:
-        continue
-    parseBenjiFile(i, "data/240419/raw/coastdown-aero/", "coastdown-aero")
-
-print("everything else")
-for i in range(60, 75):
-    parseBenjiFile(i, "data/240419/raw/everything/", "everything")
+#parseBenjiFile(116, "data/240426/", "240426")

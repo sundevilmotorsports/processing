@@ -47,20 +47,33 @@ def generate_summary(path: str, session: str, day: str):
 
     print("current draw (mA): ", end="")
     print(df["current draw (mA)"].describe())
+
+    print("GPS fix acquired at: ", end="")
+    gps = df[df["gps fix"] == 3]
+    if gps.shape[0] > 0:
+        gps_time = df[df["gps fix"] == 3].iloc[0]["time (s)"]
+    else:
+        gps_time = 0
+    print(gps_time, end=" seconds\n")
+    print(df["gps speed (m/s)"].describe())
     print("")
-    return df["time (s)"].max(), df["longitudinal accel (mG)"].max()
+
+    return df["time (s)"].max(), df["longitudinal accel (mG)"].max(), gps_time
 
 
 
 longruns = []
 inertial = []
-print("shakedown summaries")
-for i in range(60, 75):
-    length, accel = generate_summary("processed/everything/data" + str(i) + ".csv", "evening", "240407")
+gps = []
+print("240426 summaries")
+for i in range(115, 128):
+    length, accel, fixtime = generate_summary("processed/240426/data" + str(i) + ".csv", "midnight", "240426")
     if length > 120:
         longruns.append(i)
     if accel > 100:
         inertial.append(i)
+    if fixtime > 0:
+        gps.append(i)
 
 print("runs longer than 120 seconds: ", end="")
 print(longruns)
@@ -68,3 +81,5 @@ print(longruns)
 print("runs with > 100mG of accel: ", end="")
 print(inertial)
 
+print("runs with gps: ", end="")
+print(gps)
