@@ -12,6 +12,8 @@ def generate_summary(path: str, session: str, day: str):
     print("peak braking (mG): ", end="")
     print(df["longitudinal accel (mG)"].min())
 
+    print("max brake fluid temp (C): " + str(df["brake fluid temp (C)"].max()))
+
     print("peak cornering (mG): ", end="")
     print(max(df["lateral accel (mG)"].max(), abs(df["lateral accel (mG)"].min())))
 
@@ -58,22 +60,37 @@ def generate_summary(path: str, session: str, day: str):
     print(df["gps speed (m/s)"].describe())
     print("")
 
-    return df["time (s)"].max(), df["longitudinal accel (mG)"].max(), gps_time
+    return df["time (s)"].max(), df["longitudinal accel (mG)"].max(), gps_time, df["fl wheel speed (rpm)"].max()
 
 
 
 longruns = []
 inertial = []
 gps = []
-print("240426 summaries")
-for i in range(115, 128):
-    length, accel, fixtime = generate_summary("processed/240426/data" + str(i) + ".csv", "midnight", "240426")
+wheel = []
+
+print("240428 summaries")
+for i in range(0, 44):
+    length, accel, fixtime, rpm = generate_summary("processed/240428/data" + str(i) + ".csv", "", "")
     if length > 120:
         longruns.append(i)
     if accel > 100:
         inertial.append(i)
     if fixtime > 0:
         gps.append(i)
+    if rpm > 5:
+        wheel.append(i)
+
+for i in range(184, 255):
+    length, accel, fixtime, rpm = generate_summary("processed/240428/data" + str(i) + ".csv", "", "")
+    if length > 120:
+        longruns.append(i)
+    if accel > 100:
+        inertial.append(i)
+    if fixtime > 0:
+        gps.append(i)
+    if rpm > 5:
+        wheel.append(i)
 
 print("runs longer than 120 seconds: ", end="")
 print(longruns)
@@ -83,3 +100,12 @@ print(inertial)
 
 print("runs with gps: ", end="")
 print(gps)
+
+print("runs with nonzero wheelspeed: ", end ="")
+print(wheel)
+def intersection(lst1, lst2):
+    lst3 = [value for value in lst1 if value in lst2]
+    return lst3
+
+print("feasible runs: ", end="")
+print(intersection(wheel, intersection(longruns, inertial)))

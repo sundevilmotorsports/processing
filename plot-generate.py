@@ -39,17 +39,17 @@ def generate_report(path: str, session: str, day: str, runno: str):
         axis[0, 2].set_ylabel("Temperature (C)")
         axis[0, 2].plot(df["time (s)"], df["fl rotor temp (C)"], label="FL Rotor")
         axis[0, 2].plot(df["time (s)"], df["fr rotor temp (C)"], label="FR Rotor")
+        axis[0, 2].plot(df["time (s)"], df["rl rotor temp (C)"], label="RL Rotor")
         axis[0, 2].legend()
 
-    # Shock Displacement vs Time
-    axis[1, 1].set_title("Shock Displacement")
-    axis[1, 1].set_xlabel("Time (s)")
-    axis[1, 1].set_ylabel("Displacement (mm)")
-    #axis[1, 1].plot(df["time (s)"], df["fl displacement (mm)"], label="FL")
-    #axis[1, 1].plot(df["time (s)"], df["fr displacement (mm)"], label="FR")
-    #axis[1, 1].plot(df["time (s)"], df["rr displacement (mm)"], label="RR")
-    #axis[1, 1].plot(df["time (s)"], df["rl displacement (mm)"], label="RL")
-    axis[1, 1].legend()
+    # GPS
+    axis[1, 1].set_title("GPS")
+    axis[1, 1].set_xlabel("longitude")
+    axis[1, 1].set_ylabel("latitude")
+    gps = df.loc[df["gps fix"] == 3]
+    if runno == "38":
+        gps = gps.loc[gps["gps longitude"] > 300]
+    axis[1, 1].plot(gps["gps longitude"], gps["gps latitude"])
 
     # wheel RPM vs Time
     axis[1, 2].set_title("wheel RPM")
@@ -67,11 +67,8 @@ def generate_report(path: str, session: str, day: str, runno: str):
     plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
 
 
-"""print("shakedown")
-for i in range(64, 67):
-    generate_report("processed/everything/data" + str(i) + ".csv", "accel", "240419", str(i))
-"""
-
-#generate_report("processed/240426/data127.csv", "ff", "aa", 69)
-for i in range(115, 128):
-    generate_report("processed/240426/data" + str(i) + ".csv", "hehe", "240426", str(i))
+generate_report("processed/240428/data" + "38" + ".csv", "auto", "240428", str(38))
+hehe = [3, 19, 21, 22, 23, 24, 30, 32, 34, 35, 37, 38, 200, 204, 206, 207, 208, 209, 210, 211, 212, 213, 215]
+for i in hehe:
+    pass
+    generate_report("processed/240428/data" + str(i) + ".csv", "auto", "240428", str(i))
