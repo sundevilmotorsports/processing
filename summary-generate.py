@@ -12,8 +12,6 @@ def generate_summary(path: str, session: str, day: str):
     print("peak braking (mG): ", end="")
     print(df["longitudinal accel (mG)"].min())
 
-    print("max brake fluid temp (C): " + str(df["brake fluid temp (C)"].max()))
-
     print("peak cornering (mG): ", end="")
     print(max(df["lateral accel (mG)"].max(), abs(df["lateral accel (mG)"].min())))
 
@@ -23,11 +21,17 @@ def generate_summary(path: str, session: str, day: str):
     print("max FL rotor temperature (C): ", end="")
     print(df["fl rotor temp (C)"].max())
 
-    print("max FR wheel RPM: ", end="")
-    print(df["fr wheel speed (rpm)"].max())
+    print("max RR wheel RPM: ", end="")
+    print(df["rr wheel speed (rpm)"].max())
 
-    print("max FR rotor temperature (C): ", end="")
-    print(df["fr rotor temp (C)"].max())
+    print("max RR rotor temperature (C): ", end="")
+    print(df["rr rotor temp (C)"].max())
+
+    print("max RL wheel RPM: ", end="")
+    print(df["rl wheel speed (rpm)"].max())
+
+    print("max RL rotor temperature (C): ", end="")
+    print(df["rl rotor temp (C)"].max())
 
     print("FR shock travel range (mm): ", end="")
     print(df["fr shock position (mm)"].max() - df["fr shock position (mm)"].min())
@@ -69,9 +73,9 @@ inertial = []
 gps = []
 wheel = []
 
-print("240428 summaries")
-for i in range(0, 44):
-    length, accel, fixtime, rpm = generate_summary("processed/240428/data" + str(i) + ".csv", "", "")
+print("240503 summaries")
+for i in range(45, 67):
+    length, accel, fixtime, rpm = generate_summary("processed/240503/data" + str(i) + ".csv", "", "")
     if length > 120:
         longruns.append(i)
     if accel > 100:
@@ -81,16 +85,6 @@ for i in range(0, 44):
     if rpm > 5:
         wheel.append(i)
 
-for i in range(184, 255):
-    length, accel, fixtime, rpm = generate_summary("processed/240428/data" + str(i) + ".csv", "", "")
-    if length > 120:
-        longruns.append(i)
-    if accel > 100:
-        inertial.append(i)
-    if fixtime > 0:
-        gps.append(i)
-    if rpm > 5:
-        wheel.append(i)
 
 print("runs longer than 120 seconds: ", end="")
 print(longruns)

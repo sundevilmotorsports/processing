@@ -38,7 +38,7 @@ def generate_report(path: str, session: str, day: str, runno: str):
         axis[0, 2].set_xlabel("Time (s)")
         axis[0, 2].set_ylabel("Temperature (C)")
         axis[0, 2].plot(df["time (s)"], df["fl rotor temp (C)"], label="FL Rotor")
-        axis[0, 2].plot(df["time (s)"], df["fr rotor temp (C)"], label="FR Rotor")
+        axis[0, 2].plot(df["time (s)"], df["rr rotor temp (C)"], label="RR Rotor")
         axis[0, 2].plot(df["time (s)"], df["rl rotor temp (C)"], label="RL Rotor")
         axis[0, 2].legend()
 
@@ -56,19 +56,20 @@ def generate_report(path: str, session: str, day: str, runno: str):
     axis[1, 2].set_xlabel("Time (s)")
     axis[1, 2].set_ylabel("Wheel Speed (RPM)")
     axis[1, 2].plot(df["time (s)"], df["fl wheel speed (rpm)"], label="FL")
-    axis[1, 2].plot(df["time (s)"], df["fr wheel speed (rpm)"], label="FR")
+    axis[1, 2].plot(df["time (s)"], df["rr wheel speed (rpm)"], label="RR")
+    axis[1, 2].plot(df["time (s)"], df["rl wheel speed (rpm)"], label="RL")
 
     ax2 = axis[1,2].twinx()
     ax2.set_ylabel("test number", color="tab:red")
     ax2.plot(df["time (s)"], df["test number"], 'r')
 
     axis[1, 2].legend()
-    #plt.show()
-    plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
+    plt.show()
+    #plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
 
 
-generate_report("processed/240428/data" + "38" + ".csv", "auto", "240428", str(38))
+generate_report("processed/240503/data" + "50" + ".csv", "auto", "240503", str(50))
 hehe = [3, 19, 21, 22, 23, 24, 30, 32, 34, 35, 37, 38, 200, 204, 206, 207, 208, 209, 210, 211, 212, 213, 215]
-for i in hehe:
+for i in range(45, 67):
     pass
-    generate_report("processed/240428/data" + str(i) + ".csv", "auto", "240428", str(i))
+    #generate_report("processed/240503/data" + str(i) + ".csv", "auto", "240503", str(i))

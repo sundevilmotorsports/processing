@@ -9,19 +9,20 @@ df = pd.read_csv("processed/240428/data34.csv")
 plt.title("processed/240428/data34.csv")
 fig, ax = plt.subplots()
 #ax2 = ax.twinx()
-"""ax.plot(df["time (s)"], df["fl wheel ambient temp (C)"], label="FL Ambient")
+ax.plot(df["time (s)"], df["fl wheel ambient temp (C)"], label="FL Ambient")
 ax.plot(df["time (s)"], df["fl rotor temp (C)"], label="FL Rotor")
 
 ax.plot(df["time (s)"], df["fr wheel ambient temp (C)"], label="FR Ambient")
 ax.plot(df["time (s)"], df["fr rotor temp (C)"], label="FR Rotor")
 
 ax.plot(df["time (s)"], df["rl wheel ambient temp (C)"], label="RL Ambient")
-ax.plot(df["time (s)"], df["rl rotor temp (C)"], label="RL Rotor")"""
+ax.plot(df["time (s)"], df["rl rotor temp (C)"], label="RL Rotor")
+ax.plot(df["time (s)"], df["brake fluid temp (C)"], label="Brake Fluid")
 
-ax.plot(df["time (s)"], df["fr displacement (mm)"], label="FR")
+"""ax.plot(df["time (s)"], df["fr displacement (mm)"], label="FR")
 ax.plot(df["time (s)"], df["fl displacement (mm)"], label="FL")
 ax.plot(df["time (s)"], df["rl displacement (mm)"], label="RL")
-ax.plot(df["time (s)"], df["rr displacement (mm)"], label="RR")
+ax.plot(df["time (s)"], df["rr displacement (mm)"], label="RR")"""
 
 ax.set_xlabel("Time (s)")
 ax.set_ylabel("Temperature (C)")
