@@ -64,12 +64,12 @@ def generate_report(path: str, session: str, day: str, runno: str):
     ax2.plot(df["time (s)"], df["test number"], 'r')
 
     axis[1, 2].legend()
-    plt.show()
-    #plt.savefig("reports/" + day + "/" + session + "/plots" + runno + ".png")
+    #plt.show()
+    plt.savefig("processed/" + day + "/" + session + "/plots" + runno + ".png")
 
 
-generate_report("processed/240503/data" + "50" + ".csv", "auto", "240503", str(50))
-hehe = [3, 19, 21, 22, 23, 24, 30, 32, 34, 35, 37, 38, 200, 204, 206, 207, 208, 209, 210, 211, 212, 213, 215]
-for i in range(45, 67):
+#generate_report("processed/240921/data" + "50" + ".csv", "auto", "240921", str(50))
+#hehe = [3, 19, 21, 22, 23, 24, 30, 32, 34, 35, 37, 38, 200, 204, 206, 207, 208, 209, 210, 211, 212, 213, 215]
+for i in range(1, 10):
     pass
-    #generate_report("processed/240503/data" + str(i) + ".csv", "auto", "240503", str(i))
+    generate_report("processed/241003/data" + str(i) + ".csv", "auto", "241003", str(i))

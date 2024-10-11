@@ -39,7 +39,7 @@ def parseBenjiFile(number: int, path: str, session: str):
                 data = f.read(2) # front brake pressure
                 if data is None:
                     break
-                fbp = brakePressure(int.from_bytes(data, "big"))
+                fbp = steering(int.from_bytes(data, "big"))
                 
                 data = f.read(2) # rear brake pressure
                 if data is None:
@@ -244,13 +244,14 @@ def parseBenjiFile(number: int, path: str, session: str):
                 test_no = int.from_bytes(data, "big")
 
 
+
                 # read timestamp for next row
                 data = f.read(4)
 
                 csv.write(str(time/1000) + "," + str(test_no) + "," + str(fbp) + "," + str(rbp) + "," + str(steer) + "," + 
                             str(fls) + "," + str(frs) + "," + str(rrs) + "," + str(rls) + "," + 
                             str(current) + "," + str(battery) + "," + 
-                            str(xAccel) + "," + str(yAccel) + "," + str(zAccel) + "," + # this line contains information about IMU orientation
+                            str(xAccel) + "," + str(yAccel) + "," + str(zAccel) + "," +
                             str(xGyro) + "," + str(yGyro) + "," + str(zGyro) + "," +
                             str(flsg) + "," + str(frsg) + "," + str(rrsg) + "," + str(rlsg) + "," +
                             str(flw_amb) + "," + str(flw_rtr) + "," + str(flw_rpm) + "," +
