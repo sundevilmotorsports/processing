@@ -18,14 +18,14 @@ def parseBenjiFile(number: int, path: str, session: str):
                     "fl shock position (mm),fr shock position (mm),rr shock position (mm),rl shock position (mm)," +
                     "current draw (mA),battery (V)," + 
                     "longitudinal accel (mG),lateral accel (mG),gravity (mG)," +
-                    "xgyro (mdps),ygyro (mdps),zgyro (mdps)," +
-                    "flsg (lbs),frsg (lbs),rrsg (adc),rlsg (lbs)," +
-                    "fl wheel ambient temp (C),fl rotor temp (C),fl wheel speed (rpm)," +
-                    "fr wheel ambient temp (C),fr rotor temp (C),fr wheel speed (rpm)," +
-                    "rr wheel ambient temp (C),rr rotor temp (C),rr wheel speed (rpm)," +
-                    "rl wheel ambient temp (C),rl rotor temp (C),rl wheel speed (rpm)," +
+                    "xgyro (mdps),ygyro (mdps),zgyro (mdps),imu dtc," +
+                    "flsg (lbs),flsg dtc,frsg (lbs),frsg dtc,rrsg (adc),rrsg dtc,rlsg (lbs),rlsg dtc," +
+                    "fl wheel ambient temp (C),fl rotor temp (C),fl wheel speed (rpm),fl wheel dtc," +
+                    "fr wheel ambient temp (C),fr rotor temp (C),fr wheel speed (rpm),fr wheel dtc," +
+                    "rr wheel ambient temp (C),rr rotor temp (C),rr wheel speed (rpm),rr wheel dtc," +
+                    "rl wheel ambient temp (C),rl rotor temp (C),rl wheel speed (rpm),rl wheel dtc," +
                     "drs status,brake fluid temp (C),throttle load (adc)," +
-                    "gps fix,gps longitude,gps latitude,gps speed (m/s)" +
+                    "gps fix,gps fix 0 dtc,gps fix 1 dtc,gps longitude,gps latitude,gps speed (m/s)" +
                     "\n")
             data = f.read(4)
             init = int.from_bytes(data, "big")
@@ -243,6 +243,61 @@ def parseBenjiFile(number: int, path: str, session: str):
                     break
                 test_no = int.from_bytes(data, "big")
 
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_flw = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_frw = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_rlw = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_rrw = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_flsg = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_frsg = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_rlsg = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_rrsg = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_imu = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_gps_0 = int.from_bytes(data, "big")
+
+                data = f.read(1)
+                if data is None:
+                    break
+                dtc_gps_1 = int.from_bytes(data, "big")
+
 
                 # read timestamp for next row
                 data = f.read(4)
@@ -251,14 +306,14 @@ def parseBenjiFile(number: int, path: str, session: str):
                             str(fls) + "," + str(frs) + "," + str(rrs) + "," + str(rls) + "," + 
                             str(current) + "," + str(battery) + "," + 
                             str(xAccel) + "," + str(yAccel) + "," + str(zAccel) + "," + # this line contains information about IMU orientation
-                            str(xGyro) + "," + str(yGyro) + "," + str(zGyro) + "," +
-                            str(flsg) + "," + str(frsg) + "," + str(rrsg) + "," + str(rlsg) + "," +
-                            str(flw_amb) + "," + str(flw_rtr) + "," + str(flw_rpm) + "," +
-                            str(frw_amb) + "," + str(frw_rtr) + "," + str(frw_rpm) + "," +
-                            str(rrw_amb) + "," + str(rrw_rtr) + "," + str(rrw_rpm) + "," +
-                            str(rlw_amb) + "," + str(rlw_rtr) + "," + str(rlw_rpm) + "," +
+                            str(xGyro) + "," + str(yGyro) + "," + str(zGyro) + "," + str(dtc_imu) + "," +
+                            str(flsg) + "," + str(dtc_flsg) + "," + str(frsg) + "," + str(dtc_frsg) + "," + str(rrsg) + "," + str(dtc_rrsg) + "," + str(rlsg) + "," + str(dtc_rlsg) + "," + 
+                            str(flw_amb) + "," + str(flw_rtr) + "," + str(flw_rpm) + "," + str(dtc_flw) + "," + 
+                            str(frw_amb) + "," + str(frw_rtr) + "," + str(frw_rpm) + "," + str(dtc_frw) + "," + 
+                            str(rrw_amb) + "," + str(rrw_rtr) + "," + str(rrw_rpm) + "," + str(dtc_rrw) + "," + 
+                            str(rlw_amb) + "," + str(rlw_rtr) + "," + str(rlw_rpm) + "," + str(dtc_rlw) + "," + 
                             str(drs) + "," + str(brake_fluid) + "," + str(throttle_load) + "," + 
-                            str(gps_fix) + "," + str(gps_lon) + "," + str(gps_lat) + "," + str(gps_spd) +
+                            str(gps_fix) + "," + str(dtc_gps_0) + "," + str(dtc_gps_1) + "," + str(gps_lon) + "," + str(gps_lat) + "," + str(gps_spd) +
                             "\n")
             
             print("run length: " + str(last/1000) + " s")
