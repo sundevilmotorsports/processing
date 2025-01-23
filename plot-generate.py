@@ -70,6 +70,7 @@ def generate_report(path: str, session: str, day: str, runno: str):
 
 #generate_report("processed/240921/data" + "50" + ".csv", "auto", "240921", str(50))
 #hehe = [3, 19, 21, 22, 23, 24, 30, 32, 34, 35, 37, 38, 200, 204, 206, 207, 208, 209, 210, 211, 212, 213, 215]
-for i in range(1, 10):
+for i in range(65,75):
     pass
-    generate_report("processed/241003/data" + str(i) + ".csv", "auto", "241003", str(i))
+    generate_report("processed/241103/data" + str(i) + ".csv", "auto", "241103", str(i))
+

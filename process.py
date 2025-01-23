@@ -266,5 +266,5 @@ def parseBenjiFile(number: int, path: str, session: str):
     shock_vel(csv_name)
             
 
-for i in range(1, 21):
-    parseBenjiFile(str(i), "data/241003/", "241003")
+for i in range(97, 98):
+    parseBenjiFile(str(i), "data/241103/", "241103")
