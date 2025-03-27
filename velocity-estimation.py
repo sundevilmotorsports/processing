@@ -202,116 +202,160 @@ def EKFVxVy( t: np.ndarray[ float ], ax: np.ndarray[ float ], ay: np.ndarray[ fl
     return filtered_Vx, filtered_Vy
 
 
+def GPSProcessing( v_gps: np.ndarray[ float ] ) -> np.ndarray[ float ]:
+    """
+    Removes large outliers in GPS velocity data by replacing them by the previous value
+
+    Args:
+        v_gps ( np.ndarray[ float ] ): array of GPS velocity (m/s)
+
+    Returns:
+        v_gps_proc ( np.ndarray[ float ] ): array of processed GPS velocity (m/s)
+    """
+    # Remove large outliers from GPS velocity data
+    v_gps_proc = np.zeros( v_gps.size )
+
+    for i in range( v_gps.size ):
+        if( v_gps[i] > 50 ):
+            v_gps_proc[ i ] = v_gps_proc[ i - 1 ]
+        else:
+            v_gps_proc[ i ] = v_gps[ i ]
+    
+    return v_gps_proc
+
+
 if __name__ == "__main__":
 
-    ## LOAD DATA
     df = pd.read_csv( "data120.csv" )
 
     time = df[ 'time (s)' ].to_numpy()
     ax_raw = df[ 'longitudinal accel (mG)' ].to_numpy()
     ay_raw = df[ 'lateral accel (mG)' ].to_numpy()
-    w_fl = df[ 'fl wheel speed (rpm)' ].to_numpy()
     w_fr = df[ 'fr wheel speed (rpm)' ].to_numpy()
     v_gps = df[ 'gps speed (m/s)' ].to_numpy()
 
-    ## DATA PROCESSING
-    # Kalman Filter Ax (mG)
-    ax_KF = KF( ax_raw, 0.1, 10000 )   
+    # Select mode for speed estimation:
+    # 0 = IMU only ( open loop integration of Ax and Ay )
+    # 1 = GPS only
+    # 2 = Filtered Wheel Speed only
+    # 3 = Fusion of Ax and Wheel Speed
+    # 4 = Fusion of Ax and GPS
+    # 5 = Fusion of Ax, Ay and GPS
+    mode = 5
 
-    # Kalman Filter Ay (mG)
-    ay_KF = KF( ay_raw, 0.1, 10000 )
+    match mode:
+        case 0:
+            ax_KF = KF( ax_raw, 0.1, 10000 )    # Kalman Filter Ax (mG)
+            ay_KF = KF( ay_raw, 0.1, 10000 )    # Kalman Filter Ay (mG)
+            
+            # Vx (m/s): Integration of filtered Ax
+            vx_int = np.zeros( time.size )
+            for i in range( 1, time.size ):
+                vx_int[ i ] =  vx_int[ i - 1 ] + ( ( ( time[ i ] - time[ i - 1 ] ) * ( ax_KF[ i ] / 1000 * 9.80665 ) ) )
 
-    # Vx (m/s): Integration of filtered Ax
-    vx_int = np.zeros( time.size )
-    for i in range( 1, time.size ):
-        vx_int[ i ] =  vx_int[ i - 1 ] + ( ( ( time[ i ] - time[ i - 1 ] ) * ( ax_KF[ i ] / 1000 * 9.80665 ) ) )
+            # Vy (m/s): Integration of filtered Ay
+            vy_int = np.zeros( time.size )
+            for i in range( 1, time.size ):
+                vy_int[ i ] =  vy_int[ i - 1 ] + ( ( ( time[ i ] - time[ i - 1 ] ) * ( ay_KF[ i ] / 1000 * 9.80665 ) ) )
 
-    # Vy (m/s): Integration of filtered Ay
-    vy_int = np.zeros( time.size )
-    for i in range( 1, time.size ):
-        vy_int[ i ] =  vy_int[ i - 1 ] + ( ( ( time[ i ] - time[ i - 1 ] ) * ( ay_KF[ i ] / 1000 * 9.80665 ) ) )
+            plt.figure()
+            plt.subplot( 1, 2, 1 )
+            plt.plot( time, ax_raw, time, ax_KF )
+            plt.title( 'Ax Filtering' )
+            plt.legend( [ 'Raw', 'KF' ] )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Ax (mG)')
+            plt.grid()
+            plt.subplot( 1, 2, 2 )
+            plt.plot( time, vx_int )
+            plt.title( 'Ax From Vx Integration' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Vx (m/s)' )
+            plt.grid()
 
-    # Remove large outliers from GPS velocity data
-    v_gps_proc = np.zeros( v_gps.size )
-    for i in range( v_gps.size ):
-        if( v_gps[i] > 100 ):
-            v_gps_proc[i] = v_gps_proc[ i - 1 ]
-        else:
-            v_gps_proc[i] = v_gps[i]
+            plt.figure()
+            plt.subplot( 1, 2, 1 )
+            plt.plot( time, ay_raw, time, ay_KF )
+            plt.title( 'Ay Filtering' )
+            plt.legend( [ 'Raw', 'KF' ] )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Ay (mG)')
+            plt.grid()
+            plt.subplot( 1, 2, 2 )
+            plt.plot( time, vy_int )
+            plt.title( 'Ay from Vy Integration' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Vy (m/s)' )
+            plt.grid()
+            plt.show()
 
-    # Filtered Wheel Speed
-    w_fr_KF = KF( w_fr, 0.1, 10000 )
+        case 1:
+            v_gps_proc = GPSProcessing( v_gps )
+            plt.figure()
+            plt.plot( time, v_gps_proc )
+            plt.title( 'Velocity from GPS' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Velocity (m/s)' )
+            plt.grid()
+            plt.show()
 
-    # Vx: fusion of Ax and wheel speed
-    v_ax_wfr = fusionAxW( time, ax_raw, w_fr, 1, 10 )
+        case 2:
+            w_fr_KF = KF( w_fr, 0.1, 10000 )        # Filtered Wheel Speed
+            plt.subplot( 1, 2, 1 )
+            plt.plot( time, w_fr, time, w_fr_KF )
+            plt.title( 'Front Wheel Speed Filtering' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Wheel Speed (rad/s)' )
+            plt.legend( [ 'Raw', 'KF' ] )
+            plt.grid()
+            plt.subplot( 1, 2, 2 )
+            plt.plot( time, ( w_fr_KF * pi * 0.4572 ) / 60 )
+            plt.title( 'Velocity from Front Wheel Speed' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Velocity (m/s)' )
+            plt.grid()
+            plt.show()
 
-    # Vx: fusion of Ax and gps
-    v_ax_gps = fusionAxGps( time, ax_raw, v_gps_proc, 10, 10000 )
+        case 3: 
+            v_ax_wfr = fusionAxW( time, ax_raw, w_fr, 1, 10 )   # Fusion of Ax and wheel speed
+            plt.plot( time, v_ax_wfr )
+            plt.title( 'Velocity from Fusion of Ax & Front Wheel Speed' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Velocity (m/s)' )
+            plt.grid()
+            plt.show()
 
-    # Vx Vy Extended Kalman Filter
-    vx_EKF, vy_EKF = EKFVxVy( time, ax_raw, ay_raw, v_gps_proc, 1, 100 )
+        case 4: 
+            v_gps_proc = GPSProcessing( v_gps )
+            v_ax_gps = fusionAxGps( time, ax_raw, v_gps_proc, 10, 10000 )   # Fusion of Ax and GPS
+            plt.plot( time, v_ax_gps )
+            plt.title( 'Velocity from Fusion of Ax & GPS' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Velocity (m/s)' )
+            plt.grid()
+            plt.show()
 
-    ## PLOTS
-    # Ax filtering
-    plt.figure()
-    plt.plot( time, ax_raw, time, ax_KF )
-    plt.grid()
-    plt.title( 'Ax Filtering' )
-    plt.legend( [ 'Raw', 'KF' ] )
-    plt.xlabel( 'Time (s)' )
-    plt.ylabel( 'Ax (mG)')
-
-    # Ay
-    plt.figure()
-    plt.plot( time, ay_raw, time, ay_KF )
-    plt.grid()
-    plt.title( 'Ay Filtering' )
-    plt.legend( [ 'Raw', 'KF' ] )
-    plt.xlabel( 'Time (s)' )
-    plt.ylabel( 'Ay (mG)')
-
-    # Vx integration
-    plt.figure()
-    plt.plot( time, vx_int )
-    plt.grid()
-    plt.title( 'Vx Integration' )
-    plt.xlabel( 'Time (s)' )
-    plt.ylabel( 'Vx (m/s)' )
-
-    # Vy integration
-    plt.figure()
-    plt.plot( time, vy_int )
-    plt.grid()
-    plt.title( 'Vy Integration' )
-    plt.xlabel( 'Time (s)' )
-    plt.ylabel( 'Vy (m/s)' )
-
-    plt.figure()
-    plt.plot( time, vx_EKF )
-    plt.grid()
-    plt.title( 'Vx EKF' )
-    plt.xlabel( 'Time (s)' )
-    plt.ylabel( 'Vx (m/s)' )
-
-    plt.figure()
-    plt.plot( time, vy_EKF )
-    plt.grid()
-    plt.title( 'Vy EKF' )
-    plt.xlabel( 'Time (s)' )
-    plt.ylabel( 'Vy ( m/s )' )
-
-    # Filtered Wheel speed
-    plt.figure()
-    plt.plot( time, w_fr, time, w_fr_KF )
-    plt.grid()
-    plt.title( "Wheel Speed Filtering" )
-    plt.legend( [ 'Raw', 'KF' ] )
-
-    plt.figure()
-    # plt.plot(  time, v_gps_proc, time, v_ax_wfr, time, ( w_fr_KF * pi * 0.4572 ) / 60, time, v_ax_gps )
-    plt.plot(  time, v_gps_proc, time, v_ax_gps )
-    plt.grid()
-    plt.title( 'Velocity' )
-    plt.legend( [ 'GPS', 'Fusion Ax-GPS' ] )
-    
-    plt.show()
+        case 5:
+            v_gps_proc = GPSProcessing( v_gps )
+            vx_EKF, vy_EKF = EKFVxVy( time, ax_raw, ay_raw, v_gps_proc, 1, 100 )    # Vx Vy Extended Kalman Filter
+            plt.figure()
+            plt.subplot( 1, 2, 1 )
+            plt.plot( time, vx_EKF )
+            plt.title( 'Vx From Fusion of Ax, Ay & GPS (EKF)' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Vx (m/s)' )
+            plt.grid()
+            plt.subplot( 1, 2, 2 )
+            plt.plot( time, vy_EKF )
+            plt.title( 'Vy From Fusion of Ax, Ay & GPS (EKF)' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'Vy (m/s)' )
+            plt.grid()
+            
+            plt.figure()
+            plt.plot( time, np.sqrt( vx_EKF ** 2 + vy_EKF ** 2) )
+            plt.title( 'Velocity from Estimated Vx and Vy' )
+            plt.xlabel( 'Time (s)' )
+            plt.ylabel( 'V (m/s)' )
+            plt.grid()
+            plt.show()
