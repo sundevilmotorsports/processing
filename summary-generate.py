@@ -73,9 +73,9 @@ inertial = []
 gps = []
 wheel = []
 
-print("241103 summaries")
+print("240404 summaries")
 for i in range(97, 98):
-    length, accel, fixtime, rpm = generate_summary("processed/241103/data" + str(i) + ".csv", "", "")
+    length, accel, fixtime, rpm = generate_summary("processed/240404/data" + str(i) + ".csv", "", "")
     if length > 120:
         longruns.append(i)
     if accel > 100:

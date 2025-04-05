@@ -322,4 +322,7 @@ def parseBenjiFile(number: int, path: str, session: str):
             
 
 # for i in range(67):
-parseBenjiFile(67, "data/250122/", "250122")
+parseBenjiFile(67, "data/250404/", "250404")
+
+for i in range(91,150):
+    parseBenjiFile(i,"")

@@ -186,8 +186,5 @@ def filter_duplicate_headers(header_str: str) -> tuple[str, list[int]]:
 
 
             
-
-# for i in range(67):
-# parseBenjiFile(67, "data/250122/", "250122")
-
-parseBenji2File(138, "data/250122/", "250122")
+for i in range(91, 150): 
+    parseBenji2File(str(i), "data/250404/", "250404")

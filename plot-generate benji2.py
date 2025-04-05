@@ -13,55 +13,55 @@ def generate_report(path: str, session: str, day: str, runno: str):
     axis[0, 0].set_ylim(-1600, 1600)
     axis[0, 0].set_xlabel("Lateral Acceleration (mG)")
     axis[0, 0].set_ylabel("Longitudinal Acceleration (mG)")
-    axis[0, 0].scatter(df["lateral accel (mG)"], df["longitudinal accel (mG)"], s=1)
+    axis[0, 0].scatter(df["IMU_Y_ACCEL"], df["IMU_X_ACCEL"], s=1)
     axis[0, 0].set_title("G-G Diagram")
 
     # Braking vs Rear Brake Pressure
     axis[1, 0].set_ylim(-1200, 100)
     axis[1, 0].set_xlabel("Rear Brake Pressure (bar)")
     axis[1, 0].set_ylabel("Longitudinal Acceleration (mG)")
-    axis[1, 0].scatter(df["r brake pressure (bar)"], df["longitudinal accel (mG)"], s=1)
+    axis[1, 0].scatter(df["R_BRAKEPRESSURE"], df["IMU_X_ACCEL"], s=1)
     axis[1, 0].set_title("Rear Brake Pressure")
 
     # IMU vs Time
     axis[0, 1].set_title("IMU vs Time")
     axis[0, 1].set_xlabel("Time (s)")
     axis[0, 1].set_ylabel("Acceleration (mG)")
-    axis[0, 1].plot(df["time (s)"], df["longitudinal accel (mG)"], label="longitudinal")
-    axis[0, 1].plot(df["time (s)"], df["lateral accel (mG)"], label="lateral")
+    axis[0, 1].plot(df["TS"], df["IMU_X_ACCEL"], label="longitudinal")
+    axis[0, 1].plot(df["TS"], df["IMU_Y_ACCEL"], label="lateral")
     axis[0, 1].legend()
 
     # Rotor Temperature vs Time
     # skipped if we dont have data
-    if df["fl rotor temp (C)"].max() > -270 or df["fr rotor temp (C)"].max() > -270:
+    if df["FLW_OBJ"].max() > -270 or df["FRW_OBJ"].max() > -270:
         axis[0, 2].set_title("Rotor Temperature vs Time")
         axis[0, 2].set_xlabel("Time (s)")
         axis[0, 2].set_ylabel("Temperature (C)")
-        axis[0, 2].plot(df["time (s)"], df["fl rotor temp (C)"], label="FL Rotor")
-        axis[0, 2].plot(df["time (s)"], df["rr rotor temp (C)"], label="RR Rotor")
-        axis[0, 2].plot(df["time (s)"], df["rl rotor temp (C)"], label="RL Rotor")
+        axis[0, 2].plot(df["TS"], df["FLW_OBJ"], label="FL Rotor")
+        axis[0, 2].plot(df["TS"], df["RRW_OBJ"], label="RR Rotor")
+        axis[0, 2].plot(df["TS"], df["RLW_OBJ"], label="RL Rotor")
         axis[0, 2].legend()
 
     # GPS
     axis[1, 1].set_title("GPS")
     axis[1, 1].set_xlabel("longitude")
     axis[1, 1].set_ylabel("latitude")
-    gps = df.loc[df["gps fix"] == 3]
+    gps = df.loc[df["GPS_FIX"] == 3]
     if runno == "38":
-        gps = gps.loc[gps["gps longitude"] > 300]
-    axis[1, 1].plot(gps["gps longitude"], gps["gps latitude"])
+        gps = gps.loc[gps["GPS_LON"] > 300]
+    axis[1, 1].plot(gps["GPS_LON"], gps["GPS_LAT"])
 
     # wheel RPM vs Time
     axis[1, 2].set_title("wheel RPM")
     axis[1, 2].set_xlabel("Time (s)")
     axis[1, 2].set_ylabel("Wheel Speed (RPM)")
-    axis[1, 2].plot(df["time (s)"], df["fl wheel speed (rpm)"], label="FL")
-    axis[1, 2].plot(df["time (s)"], df["rr wheel speed (rpm)"], label="RR")
-    axis[1, 2].plot(df["time (s)"], df["rl wheel speed (rpm)"], label="RL")
+    axis[1, 2].plot(df["TS"], df["FLW_RPM"], label="FL")
+    axis[1, 2].plot(df["TS"], df["RRW_RPM"], label="RR")
+    axis[1, 2].plot(df["TS"], df["RLW_RPM"], label="RL")
 
     ax2 = axis[1,2].twinx()
     ax2.set_ylabel("test number", color="tab:red")
-    ax2.plot(df["time (s)"], df["test number"], 'r')
+    ax2.plot(df["TS"], df["TESTNO"], 'r')
 
     axis[1, 2].legend()
     #plt.show()
