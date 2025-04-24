@@ -24,3 +24,5 @@ def fl_sg(adcValue: int):
 
 def rl_sg(adcValue: int):
     return (4.7 / 7.3) * (adcValue - 931)
+
+    
