@@ -33,8 +33,8 @@ class device_data:
 
 
 def parseBenji2File(number: int, path: str, session: str):
-    binary_name = path + "data" + str(number) + ".benji2"
-    csv_name = "processed/" + session + "/data" + str(number) + ".csv"
+    binary_name = path + "data24_" + str(number) + ".benji2"
+    csv_name = "processed/" + session + "/data24_" + str(number) + ".csv"
     with open(binary_name, 'br') as f:
         with open(csv_name, 'w') as csv:
 
@@ -68,11 +68,13 @@ def parseBenji2File(number: int, path: str, session: str):
                         device.conversion_factor = 1.25 / 1000
                         device.signed = True
                     case "FL_SG":
-                        device.conversion_factor = lambda v: ((4.7 / 10) * (v - 1432))
+                        device.conversion_factor = lambda v: (-11052026.1 * v + 2606.22253)
                     case "FR_SG":
-                        device.conversion_factor = lambda v: (-(4.7 / 9.24) * (v - 63608))
+                        device.conversion_factor = lambda v: (v)
                     case "RL_SG":
-                        device.conversion_factor = lambda v: ((4.7 / 7.3) * (v - 931))
+                        device.conversion_factor = lambda v: (-1401922.44 * v + 92026.0137)
+                    case "RR_SG":
+                        device.conversion_factor = lambda v: (v)
                     case "IMU_X_ACCEL":
                         device.signed = True
                     case "IMU_Y_ACCEL":
@@ -186,5 +188,5 @@ def filter_duplicate_headers(header_str: str) -> tuple[str, list[int]]:
 
 
             
-for i in range(91, 150): 
-    parseBenji2File(str(i), "data/250404/", "250404")
+for i in range(200, 254): 
+    parseBenji2File(str(i), "data/250122/", "250122")
