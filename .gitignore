@@ -6,5 +6,4 @@ venv
 reports
 *.benji2
 /output
-process_benji2_csv.py
-process_benji2_motec.py
+process_benji2_cutdown.py
