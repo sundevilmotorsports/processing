@@ -68,7 +68,7 @@ def parseBenji2File(file_path: str, output_dir: str):
         deviceList = [key.strip() for key in filtered_header.split(",")]
 
         devices = [device_data(deviceList[i], i, dataSize[i]) for i in range(len(deviceList))]
-
+     
         # conversions
         for device in devices:
             match device.name:
