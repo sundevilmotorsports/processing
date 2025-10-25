@@ -10,3 +10,5 @@ process_benji2_cutdown.py
 process_benji2_csv.py
 process_benji2_motec.py
 process_benji2_motec.py
+/data_benji
+/data_csv_original
