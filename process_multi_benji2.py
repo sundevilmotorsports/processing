@@ -242,5 +242,5 @@ def process_directory(input_dir: str, session: str, max_workers: int | None = No
 if __name__ == '__main__':
     # Default input directory and session — change as needed or call process_directory from another script
     default_input = 'data_benji/'
-    default_session = 'benji2'
+    default_session = 'csv'
     process_directory(default_input, default_session)
