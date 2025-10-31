@@ -298,28 +298,58 @@ def filter_duplicate_headers(header_str: str) -> tuple[str, list[int]]:
 # -----------------------------
 if __name__ == "__main__":
     import sys
+    import glob
+    import time
 
     if len(sys.argv) < 2:
-        print("Usage: python benji2_to_motec.py <benji2_file> [output.ld]")
+        print("Usage: python benji2_to_motec.py <directory>")
         print("\nExample:")
-        print("  python benji2_to_motec.py data/250122/data24_205.benji2")
-        print("  python benji2_to_motec.py data/250122/data24_205.benji2 output/run205.ld")
+        print("  python benji2_to_motec.py data_benji")
         exit(1)
 
-    benji2_file = sys.argv[1]
+    start_time = time.time()
+    directory = sys.argv[1]
+    benji2_files = glob.glob(os.path.join(directory, "*.benji2"))
 
-    # Default output: same name as input but with .ld extension
-    if len(sys.argv) >= 3:
-        output_file = sys.argv[2]
-    else:
-        output_file = os.path.splitext(benji2_file)[0] + ".ld"
+    if not benji2_files:
+        print(f"No .benji2 files found in {directory}")
+        exit(1)
 
-    print(f"Converting {benji2_file} to {output_file}")
+    # Create processed_motec directory if it doesn't exist
+    output_dir = "processed_motec"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"Created output directory: {output_dir}")
 
-    # Parse benji2 file
-    samples, freq, devices = parseBenji2File(benji2_file)
+    total_files = len(benji2_files)
+    print(f"\nFound {total_files} .benji2 files to process")
+    print("-" * 50)
 
-    # Convert to MoTeC
-    convert_benji2_to_motec(samples, freq, devices, output_file)
+    for index, benji2_file in enumerate(benji2_files, 1):
+        # Create output file path in processed_motec directory
+        output_filename = os.path.basename(os.path.splitext(benji2_file)[0]) + ".ld"
+        output_file = os.path.join("processed_motec", output_filename)
+        
+        # Calculate progress percentage
+        progress = (index / total_files) * 100
+        print(f"[{progress:3.1f}%] Processing file {index}/{total_files}: {os.path.basename(benji2_file)}")
 
-    print("Conversion complete!")
+        try:
+            # Parse benji2 file
+            samples, freq, devices = parseBenji2File(benji2_file)
+
+            # Convert to MoTeC
+            convert_benji2_to_motec(samples, freq, devices, output_file)
+
+            print(f"Successfully converted {os.path.basename(benji2_file)}")
+        except Exception as e:
+            print(f"Error converting {os.path.basename(benji2_file)}: {str(e)}")
+            continue
+
+    end_time = time.time()
+    total_time = end_time - start_time
+    minutes = int(total_time // 60)
+    seconds = int(total_time % 60)
+    
+    print(f"\nConversion process complete!")
+    print(f"Total processing time: {minutes} minutes and {seconds} seconds")
