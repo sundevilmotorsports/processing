@@ -92,7 +92,7 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
                     case "IMU_Z_GYRO":
                         device.signed = True
                         device.conversion_factor = lambda v: (v/65.6)
-                    case "FLW_AMB" | "FRW_AMB" | "RLW_AMB" | "RRW_AMB" | "FLW_RTR" | "FRW_RTR" | "RLW_RTR" | "RRW_RTR":
+                    case "FLW_AMB" | "FRW_AMB" | "RLW_AMB" | "RRW_AMB" | "FLW_OBJ" | "FRW_OBJ" | "RLW_OBJ" | "RRW_OBJ":
                         device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
                     case "STEERING":
                         device.conversion_factor = lambda v: (((v / 1000) / 5) * 345)
