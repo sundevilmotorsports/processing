@@ -5,8 +5,6 @@ Convert BENJI2 binary telemetry files directly to MoTeC .ld format
 from datetime import datetime
 import os
 
-
-
 # Channel units mapping for MoTeC conversion
 CHANNEL_UNITS = {
     "TS": "s",
@@ -194,7 +192,7 @@ def convert_benji2_to_motec(samples, freq, devices, output_path):
         devices: List of device_data objects with channel info
         output_path: Path to write the .ld file
     """
-    from SDM26.motec_ld import MotecLog, MotecChannel, MotecEvent
+    from motec_ld import MotecLog, MotecChannel, MotecEvent
 
     print(f"[DEBUG] Converting to MoTeC: {output_path}")
 
