@@ -77,21 +77,12 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
                         device.conversion_factor = lambda v: (-1401922.44 * v + 92026.0137)
                     case "RR_SG":
                         device.conversion_factor = lambda v: (v)
-                    case "IMU_X_ACCEL":
+                    case "IMU_X_ACCEL" | "IMU_Y_ACCEL" | "IMU_Z_ACCEL":
                         device.signed = True
-                    case "IMU_Y_ACCEL":
+                        device.conversion_factor = lambda v: (v*0.122) # Setting for +/- 4 G FS
+                    case "IMU_X_GYRO" | "IMU_Y_GYRO" | "IMU_Z_GYRO":
                         device.signed = True
-                    case "IMU_Z_ACCEL":
-                        device.signed = True    
-                    case "IMU_X_GYRO":
-                        device.signed = True
-                        device.conversion_factor = lambda v: (v/65.6)
-                    case "IMU_Y_GYRO":
-                        device.signed = True
-                        device.conversion_factor = lambda v: (v/65.6)
-                    case "IMU_Z_GYRO":
-                        device.signed = True
-                        device.conversion_factor = lambda v: (v/65.6)
+                        device.conversion_factor = lambda v: (v*17.50) # Setting for 500 DPS FS
                     case "FLW_AMB" | "FRW_AMB" | "RLW_AMB" | "RRW_AMB" | "FLW_OBJ" | "FRW_OBJ" | "RLW_OBJ" | "RRW_OBJ":
                         device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
                     case "STEERING":
