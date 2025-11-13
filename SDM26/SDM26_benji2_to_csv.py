@@ -5,7 +5,31 @@ from pathlib import Path
 import numpy as np
 import os
 import csv
-from devices import create_devices, configure_devices
+# cwd = os.getcwd()
+# print(cwd)
+class device_data:
+    name: str
+    column_index: int
+    byte_size: int
+    conversion_factor: float = 1.0  # For unit conversions
+    signed: bool = False
+    byte_order: str = "little"
+
+    def __init__(self, name: str, column_index: int, byte_size: int, conversion_factor: float = 1.0, signed: bool = False, byte_order: str = "little"):
+        self.name = name
+        self.column_index = column_index
+        self.byte_size = byte_size
+        self.conversion_factor = conversion_factor
+        self.signed = signed
+        self.byte_order = byte_order
+        return
+    
+    def getData(self, data: bytes):    
+        value = int.from_bytes(data, byteorder=self.byte_order, signed=self.signed)
+        if callable(self.conversion_factor):
+            return self.conversion_factor(value)
+        return value * self.conversion_factor
+
 
 
 def parseBenji2File(input_dir: str, output_dir: str, session: str):
@@ -31,20 +55,63 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
             filtered_header, dataSize = filter_duplicate_headers(header)
 
             deviceList = [key.strip() for key in filtered_header.split(",")]
-            devices = create_devices(deviceList, dataSize)
-            configure_devices(devices)
+
+            devices = []
+            for i in range(len(deviceList)):
+                devices.append(device_data(deviceList[i], i, dataSize[i]))
+
+            # Apply conversions / flags
+            for device in devices:
+                match device.name:
+                    case "TS":
+                        device.conversion_factor = 1e-6
+                    case "CURRENT":
+                        device.conversion_factor = 1.25
+                        device.signed = True
+                    case "BATTERY":
+                        device.conversion_factor = 1.25 / 1000
+                        device.signed = True
+                    case "FL_SG":
+                        device.conversion_factor = lambda v: (-11052026.1 * v + 2606.22253)
+                    case "FR_SG":
+                        device.conversion_factor = lambda v: (v)
+                    case "RL_SG":
+                        device.conversion_factor = lambda v: (-1401922.44 * v + 92026.0137)
+                    case "RR_SG":
+                        device.conversion_factor = lambda v: (v)
+                    case "IMU_X_ACCEL":
+                        device.signed = True
+                    case "IMU_Y_ACCEL":
+                        device.signed = True
+                    case "IMU_Z_ACCEL":
+                        device.signed = True    
+                    case "IMU_X_GYRO":
+                        device.signed = True
+                        device.conversion_factor = lambda v: (v/65.6)
+                    case "IMU_Y_GYRO":
+                        device.signed = True
+                        device.conversion_factor = lambda v: (v/65.6)
+                    case "IMU_Z_GYRO":
+                        device.signed = True
+                        device.conversion_factor = lambda v: (v/65.6)
+                    case "FLW_AMB" | "FRW_AMB" | "RLW_AMB" | "RRW_AMB" | "FLW_OBJ" | "FRW_OBJ" | "RLW_OBJ" | "RRW_OBJ":
+                        device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
+                    case "STEERING":
+                        device.conversion_factor = lambda v: (((v / 1000) / 5) * 345)
+                    case _:
+                        pass
 
             # write header and prepare to read data rows
             csvfile.write("," + filtered_header + "\n")
 
             f.read(1)
 
-            # # Get the initialization time
-            # data = f.read(devices[0].byte_size)
-            # init = devices[0].getData(data)
-            # last = init
+            # Get the initialization time
+            data = f.read(devices[0].byte_size)
+            init = devices[0].getData(data)
+            last = init
             count = 0
-            # f.seek(-devices[0].byte_size, os.SEEK_CUR)
+            f.seek(-devices[0].byte_size, os.SEEK_CUR)
 
             while True:
                 # Parallel Array to the header
@@ -64,6 +131,7 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
                 if eof:
                     break
 
+                last = outputList[0]
                 count += 1
                 outputList.insert(0, count)
 
@@ -78,12 +146,12 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
             # print(f"Init Time: {int.from_bytes(data, "big")/1000}")
 
             
-            # # Get the initialization time
-            # data = f.read(devices[0].byte_size)
-            # init = devices[0].getData(data)
-            # last = init
+            # Get the initialization time
+            data = f.read(devices[0].byte_size)
+            init = devices[0].getData(data)
+            last = init
             count = 0
-            # f.seek(-devices[0].byte_size, os.SEEK_CUR)
+            f.seek(-devices[0].byte_size, os.SEEK_CUR)
             while data:
                 # Parallel Array to the header
                 outputList = [None] * len(devices)
@@ -144,4 +212,4 @@ def filter_duplicate_headers(header_str: str) -> tuple[str, list[int]]:
 
 
             
-parseBenji2File("data/skidpad_test_11_9", "processed", "new_skidpad_test_11_9")
+parseBenji2File("data/26_can_testing", "processed", "can_test")
