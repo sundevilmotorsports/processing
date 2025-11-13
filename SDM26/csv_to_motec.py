@@ -6,7 +6,7 @@ import struct
 
 # Import MoTeC format classes from local file
 try:
-    from SDM26.motec_ld import MotecLog, MotecChannel, MotecEvent
+    from motec_ld import MotecLog, MotecChannel, MotecEvent
 except ImportError:
     print("ERROR: motec_ld.py not found!")
     exit(1)

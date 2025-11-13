@@ -4,7 +4,7 @@ Convert BENJI2 binary telemetry files directly to MoTeC .ld format
 """
 from datetime import datetime
 import os
-
+from devices import create_devices, configure_devices
 
 
 # Channel units mapping for MoTeC conversion
@@ -33,28 +33,6 @@ CHANNEL_UNITS = {
 }
 
 
-class device_data:
-    name: str
-    column_index: int
-    byte_size: int
-    conversion_factor: float = 1.0  # For unit conversions
-    signed: bool = False
-    byte_order: str = "big"
-
-    def __init__(self, name: str, column_index: int, byte_size: int, conversion_factor: float = 1.0, signed: bool = False, byte_order: str = "big"):
-        self.name = name
-        self.column_index = column_index
-        self.byte_size = byte_size
-        self.conversion_factor = conversion_factor
-        self.signed = signed
-        self.byte_order = byte_order
-        return
-
-    def getData(self, data: bytes):
-        value = int.from_bytes(data, byteorder=self.byte_order, signed=self.signed)
-        if callable(self.conversion_factor):
-            return self.conversion_factor(value)
-        return value * self.conversion_factor
 
 
 def parseBenji2File(file_path: str):
@@ -73,8 +51,10 @@ def parseBenji2File(file_path: str):
     with open(file_path, 'br') as f:
 
         # Get the Length of the Header String
+        # Get the Length of the Header String
         data = f.read(4)
-        headerLen = int.from_bytes(data, "little", signed=False) - 2
+        headerLen = int.from_bytes(data, "little", signed=False) - 1
+
 
         print(headerLen)
 
@@ -85,72 +65,16 @@ def parseBenji2File(file_path: str):
         filtered_header, dataSize = filter_duplicate_headers(header)
 
         deviceList = [key.strip() for key in filtered_header.split(",")]
+        devices = create_devices(deviceList, dataSize)
+        configure_devices(devices)
 
-        # Filter out CH_COUNT - it's metadata, not sensor data
-        devices = []
-        device_index = 0
-        for i in range(len(deviceList)):
-            if deviceList[i] == "CH_COUNT":
-                continue  # Skip CH_COUNT entirely
-            devices.append(device_data(deviceList[i], device_index, dataSize[i]))
-            device_index += 1
+        
 
-        # TODO: Do any column swaps here by changing device.column_index, make sure to swap both devices
-        for device in devices:
-            match device.name:
-                case "TS":
-                    device.conversion_factor = 1/1000
-                case "CURRENT":
-                    device.conversion_factor = 1.25
-                    device.signed = True
-                case "BATTERY":
-                    device.conversion_factor = 1.25 / 1000
-                    device.signed = True
-                case "FL_SG":
-                    device.conversion_factor = lambda v: (-11052026.1 * v + 2606.22253)
-                case "FR_SG":
-                    device.conversion_factor = lambda v: (v)
-                case "RL_SG":
-                    device.conversion_factor = lambda v: (-1401922.44 * v + 92026.0137)
-                case "RR_SG":
-                    device.conversion_factor = lambda v: (v)
-                case "IMU_X_ACCEL":
-                    device.signed = True
-                case "IMU_Y_ACCEL":
-                    device.signed = True
-                case "IMU_Z_ACCEL":
-                    device.signed = True
-                case "IMU_X_GYRO":
-                    device.signed = True
-                case "IMU_Y_GYRO":
-                    device.signed = True
-                case "IMU_Z_GYRO":
-                    device.signed = True
-                case "FLW_AMB":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "FRW_AMB":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "RLW_AMB":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "RRW_AMB":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "FLW_RTR":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "FRW_RTR":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "RLW_RTR":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
-                case "RRW_RTR":
-                    device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
+        f.read(1) # Changed from reading 2 bytes to 1 byte, SDM26 Logger Does Not include a null terminator in header
 
-                case _:
-                    pass  # Default case
-
-        f.read(2)
-
-        # Seek back to read first timestamp as part of data loop
-        data = f.read(devices[0].byte_size)
-        f.seek(-4, os.SEEK_CUR)
+        # # Seek back to read first timestamp as part of data loop
+        # data = f.read(devices[0].byte_size)
+        # f.seek(-4, os.SEEK_CUR)
 
         # Store samples in memory
         samples = []
@@ -194,7 +118,7 @@ def convert_benji2_to_motec(samples, freq, devices, output_path):
         devices: List of device_data objects with channel info
         output_path: Path to write the .ld file
     """
-    from SDM26.motec_ld import MotecLog, MotecChannel, MotecEvent
+    from motec_ld import MotecLog, MotecChannel, MotecEvent
 
     print(f"[DEBUG] Converting to MoTeC: {output_path}")
 
