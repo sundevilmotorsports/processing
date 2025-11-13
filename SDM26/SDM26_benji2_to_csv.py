@@ -23,6 +23,11 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
             data = f.read(4)
             headerLen = int.from_bytes(data, "little", signed=False) - 1
 
+            # Handle log files that were not written to by logger 26
+            if(headerLen <= 0):
+                print("Empty Log File! Skipping %s", benji_path)
+                continue
+
             # Grab the Header String
             data = f.read(headerLen)
             header = data.decode("utf-8")
