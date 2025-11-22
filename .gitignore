@@ -18,3 +18,4 @@ SDM26/process_benji2_motec.py
 /test_session_data
 test_session_data/
 /SDM26/output
+SDM26/inspect_ld.py
