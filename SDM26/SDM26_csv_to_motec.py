@@ -1,0 +1,252 @@
+#!/usr/bin/env python3
+"""
+Convert SDM26 CSVs to MoTeC .ld files using the motec_ld classes.
+This is adapted from the original `csv_to_motec.py` and tuned for the SDM26
+channel mapping used in this workspace.
+
+Usage (PowerShell):
+    python .\SDM26\26_csv_to_motec.py <csv_or_folder> [-s N]
+
+The script writes .ld files into `output/motec/` next to this script.
+"""
+
+import csv
+import sys
+import os
+from datetime import datetime
+from pathlib import Path
+
+# Import MoTeC format classes from local file
+try:
+    from motec_ld import MotecLog, MotecChannel, MotecEvent
+except ImportError as e:
+    print(f"Error importing MoTeC format library: {e}")
+    print(f"Make sure motec_ld.py is in the same folder")
+    sys.exit(1)
+
+# SDM26 channel mapping (csv column index, csv header name, display name, short name, units)
+ALL_CHANNELS = [
+    (1, "TS", "Time", "Time", "s"),
+    (2, "F_BRAKEPRESSURE", "Front Brake Pressure", "F_BrkPrs", "kPa"),
+    (3, "R_BRAKEPRESSURE", "Rear Brake Pressure", "R_BrkPrs", "kPa"),
+    (4, "STEERING", "Steering", "Steering", "deg"),
+    (5, "FLSHOCK", "FL Shock", "FL_Shock", "mm"),
+    (6, "FRSHOCK", "FR Shock", "FR_Shock", "mm"),
+    (7, "RRSHOCK", "RR Shock", "RR_Shock", "mm"),
+    (8, "RLSHOCK", "RL Shock", "RL_Shock", "mm"),
+    (9, "CURRENT", "Current", "Current", "A"),
+    (10, "BATTERY", "Battery Voltage", "Battery", "V"),
+    (11, "IMU_X_ACCEL", "IMU X Accel", "IMU_X", "G"),
+    (12, "IMU_Y_ACCEL", "IMU Y Accel", "IMU_Y", "G"),
+    (13, "IMU_Z_ACCEL", "IMU Z Accel", "IMU_Z", "G"),
+    (14, "IMU_X_GYRO", "IMU X Gyro", "Gyro_X", "deg/s"),
+    (15, "IMU_Y_GYRO", "IMU Y Gyro", "Gyro_Y", "deg/s"),
+    (16, "IMU_Z_GYRO", "IMU Z Gyro", "Gyro_Z", "deg/s"),
+    (17, "FR_SG", "FR Strain Gauge", "FR_SG", "raw"),
+    (18, "FL_SG", "FL Strain Gauge", "FL_SG", "raw"),
+    (19, "RL_SG", "RL Strain Gauge", "RL_SG", "raw"),
+    (20, "RR_SG", "RR Strain Gauge", "RR_SG", "raw"),
+    (21, "FLW_AMB", "FL Wheel Ambient", "FLW_Amb", "C"),
+    (22, "FLW_OBJ", "FL Wheel Object", "FLW_Obj", "raw"),
+    (23, "FLW_RPM", "FL Wheel RPM", "FLW_RPM", "rpm"),
+    (24, "FRW_AMB", "FR Wheel Ambient", "FRW_Amb", "C"),
+    (25, "FRW_OBJ", "FR Wheel Object", "FRW_Obj", "raw"),
+    (26, "FRW_RPM", "FR Wheel RPM", "FRW_RPM", "rpm"),
+    (27, "RRW_AMB", "RR Wheel Ambient", "RRW_Amb", "C"),
+    (28, "RRW_OBJ", "RR Wheel Object", "RRW_Obj", "raw"),
+    (29, "RRW_RPM", "RR Wheel RPM", "RRW_RPM", "rpm"),
+    (30, "RLW_AMB", "RL Wheel Ambient", "RLW_Amb", "C"),
+    (31, "RLW_OBJ", "RL Wheel Object", "RLW_Obj", "raw"),
+    (32, "RLW_RPM", "RL Wheel RPM", "RLW_RPM", "rpm"),
+    (33, "BRAKE_FLUID", "Brake Fluid", "BrkFluid", "raw"),
+    (34, "THROTTLE_LOAD", "Throttle Load", "Throttle", "%"),
+    (35, "BRAKE_LOAD", "Brake Load", "Brake", "%"),
+    (36, "DRS", "DRS", "DRS", "bool"),
+    (37, "GPS_LON", "GPS Longitude", "GPS_Lon", "deg"),
+    (38, "GPS_LAT", "GPS Latitude", "GPS_Lat", "deg"),
+    (39, "GPS_SPD", "GPS Speed", "GPS_Spd", "kph"),
+    (40, "GPS_FIX", "GPS Fix", "GPS_Fix", "bool"),
+    (41, "ECT", "Engine Coolant Temp", "ECT", "C"),
+    (42, "OIL_PSR", "Oil Pressure", "Oil_Prs", "kPa"),
+    (43, "TPS", "TPS", "TPS", "%"),
+    (44, "APS", "APS", "APS", "%"),
+    (45, "DRIVEN_WSPD", "Driven Wheel Speed", "DrWSpeed", "kph"),
+    (46, "TESTNO", "Test Number", "TestNo", "num"),
+    (47, "DTC_FLW", "DTC FL Wheel", "DTC_FLW", "code"),
+    (48, "DTC_FRW", "DTC FR Wheel", "DTC_FRW", "code"),
+    (49, "DTC_RLW", "DTC RL Wheel", "DTC_RLW", "code"),
+    (50, "DTC_RRW", "DTC RR Wheel", "DTC_RRW", "code"),
+    (51, "DTC_FLSG", "DTC FL Strain", "DTC_FLSG", "code"),
+    (52, "DTC_FRSG", "DTC FR Strain", "DTC_FRSG", "code"),
+    (53, "DTC_RLSG", "DTC RL Strain", "DTC_RLSG", "code"),
+    (54, "DTC_RRSG", "DTC RR Strain", "DTC_RRSG", "code"),
+    (55, "DTC_IMU", "DTC IMU", "DTC_IMU", "code"),
+    (56, "GPS_0_", "GPS 0", "GPS_0", "raw"),
+    (57, "GPS_1_", "GPS 1", "GPS_1", "raw"),
+    (58, "CH_COUNT", "Channel Count", "CH_Count", "num"),
+    (59, "FR_Wheel_Speed", "FR Wheel Speed", "FR_wspd", "kph"),
+    (60, "FL_Wheel_Speed", "FL Wheel Speed", "FL_wspd", "kph"),
+]
+
+
+def read_csv_file(csv_path, max_samples=None):
+    """Read CSV and return list of rows (skips header)."""
+    print(f"Reading {csv_path}...")
+    data = []
+    with open(csv_path, 'r', newline='') as f:
+        reader = csv.reader(f)
+        try:
+            header = next(reader)
+        except StopIteration:
+            return []
+        for i, row in enumerate(reader):
+            if max_samples and i >= max_samples:
+                break
+            data.append(row)
+    print(f"Read {len(data)} samples from {os.path.basename(csv_path)}")
+    return data
+
+
+def convert_csv_to_motec(csv_path, output_filename, max_samples=None):
+    """Convert CSV to MoTeC .ld file using SDM26 channel mapping."""
+    print("Converting CSV to MoTeC (SDM26)")
+    print("=" * 60)
+
+    data = read_csv_file(csv_path, max_samples)
+
+    # Estimate frequency from first two rows if possible
+    freq = 500
+    if len(data) >= 2:
+        try:
+            dt = float(data[1][1]) - float(data[0][1])
+            if dt > 0:
+                freq = int(1.0 / dt)
+        except Exception:
+            pass
+    print(f"Sample rate: {freq} Hz")
+
+    # Create MoTeC log and populate header
+    log = MotecLog()
+    now = datetime.now()
+    log.date = now.strftime('%d/%m/%Y')
+    log.time = now.strftime('%H:%M:%S')
+    log.driver = "Driver"
+    log.vehicle = "Vehicle"
+    log.venue = "Track"
+    log.comment = "SDM26 CSV export"
+
+    log.event = MotecEvent({
+        "name": "SDM26 Session",
+        "session": "SDM26 CSV",
+        "comment": f"Converted {Path(csv_path).name}",
+        "venuepos": 0
+    })
+
+    # Add channels defined in ALL_CHANNELS
+    print(f"\nAdding {len(ALL_CHANNELS)} channels...")
+    channels_added = []
+    for i, (col_idx, csv_name, display_name, short_name, units) in enumerate(ALL_CHANNELS):
+        try:
+            channel_def = {
+                "name": display_name,
+                "shortname": short_name[:8],
+                "units": units,
+                "id": 8000 + i,
+                "freq": freq,
+                # Use defaults: no shift, multiplier 1, scale 1, integer storage
+                "shift": 0,
+                "multiplier": 1,
+                "scale": 1,
+                "decplaces": 0,
+                "datatype": 0x07,
+                "datasize": 4,
+            }
+            channel = MotecChannel(channel_def)
+            log.add_channel(channel)
+            channels_added.append((col_idx, csv_name))
+            if i < 10 or i % 10 == 0:
+                print(f"  [{i+1:2}/{len(ALL_CHANNELS)}] {display_name:25} (col {col_idx:2}, {units})")
+        except Exception as e:
+            print(f"  ERROR adding {display_name}: {e}")
+
+    print(f"\nSuccessfully added {len(channels_added)} channels")
+
+    # Add samples row-by-row
+    print("\nConverting samples...")
+    sample_count = 0
+    for row_idx, row in enumerate(data):
+        samples = []
+        for col_idx, csv_name in channels_added:
+            try:
+                val_str = row[col_idx]
+                if val_str == 'None' or val_str == '':
+                    val = 0.0
+                else:
+                    val = float(val_str)
+                samples.append(val)
+            except (IndexError, ValueError):
+                samples.append(0.0)
+        log.add_samples(samples)
+        sample_count += 1
+
+    print(f"\nConversion complete:")
+    print(f"  Samples converted: {sample_count}")
+
+    # Write output to SDM26/output folder next to this script
+    script_dir = Path(__file__).parent
+    output_dir = script_dir / 'output'
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / output_filename
+
+    print(f"\nWriting to {output_path}...")
+    with open(output_path, 'wb') as f:
+        # motec_ld.MotecLog.to_string() returns a memoryview; write bytes()
+        f.write(bytes(log.to_string()))
+
+    file_size_mb = output_path.stat().st_size / (1024 * 1024)
+
+    print(f"\n✓ SUCCESS!")
+    print(f"  File: {output_filename}")
+    print(f"  Size: {file_size_mb:.1f} MB")
+    print(f"  Channels: {len(channels_added)}")
+    print(f"  Samples: {sample_count}")
+
+    return str(output_path)
+
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description='Convert SDM26 CSV(s) to MoTeC format')
+    parser.add_argument('input_path', help='Path to CSV file OR folder of CSVs to convert')
+    parser.add_argument('--samples', '-s', type=int, default=None,
+                       help='Max samples to convert (default: all)')
+    args = parser.parse_args()
+
+    if not os.path.exists(args.input_path):
+        print(f"Error: Path not found: {args.input_path}")
+        sys.exit(1)
+
+    # Single CSV
+    if os.path.isfile(args.input_path) and args.input_path.endswith('.csv'):
+        csv_files = [args.input_path]
+    # Folder of CSVs
+    elif os.path.isdir(args.input_path):
+        csv_files = [str(p) for p in Path(args.input_path).glob('*.csv')]
+        if not csv_files:
+            print('No CSV files found in folder.')
+            sys.exit(1)
+    else:
+        print('Error: Input must be a CSV file or a folder containing CSVs.')
+        sys.exit(1)
+
+    for csv_file in csv_files:
+        csv_basename = Path(csv_file).stem
+        output_filename = f"{csv_basename}.ld"
+        output_path = convert_csv_to_motec(csv_file, output_filename, args.samples)
+        print('\n' + '=' * 60)
+        print('DONE! Load in MoTeC i2:')
+        print(f'  File location: {output_path}')
+
+
+if __name__ == '__main__':
+    main()
