@@ -13,6 +13,7 @@ The script writes .ld files into `output/motec/` next to this script.
 import csv
 import sys
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -42,50 +43,53 @@ ALL_CHANNELS = [
     (14, "IMU_X_GYRO", "IMU X Gyro", "Gyro_X", "deg/s"),
     (15, "IMU_Y_GYRO", "IMU Y Gyro", "Gyro_Y", "deg/s"),
     (16, "IMU_Z_GYRO", "IMU Z Gyro", "Gyro_Z", "deg/s"),
-    (17, "FR_SG", "FR Strain Gauge", "FR_SG", "raw"),
-    (18, "FL_SG", "FL Strain Gauge", "FL_SG", "raw"),
-    (19, "RL_SG", "RL Strain Gauge", "RL_SG", "raw"),
-    (20, "RR_SG", "RR Strain Gauge", "RR_SG", "raw"),
-    (21, "FLW_AMB", "FL Wheel Ambient", "FLW_Amb", "C"),
-    (22, "FLW_OBJ", "FL Wheel Object", "FLW_Obj", "raw"),
-    (23, "FLW_RPM", "FL Wheel RPM", "FLW_RPM", "rpm"),
-    (24, "FRW_AMB", "FR Wheel Ambient", "FRW_Amb", "C"),
-    (25, "FRW_OBJ", "FR Wheel Object", "FRW_Obj", "raw"),
-    (26, "FRW_RPM", "FR Wheel RPM", "FRW_RPM", "rpm"),
-    (27, "RRW_AMB", "RR Wheel Ambient", "RRW_Amb", "C"),
-    (28, "RRW_OBJ", "RR Wheel Object", "RRW_Obj", "raw"),
-    (29, "RRW_RPM", "RR Wheel RPM", "RRW_RPM", "rpm"),
-    (30, "RLW_AMB", "RL Wheel Ambient", "RLW_Amb", "C"),
-    (31, "RLW_OBJ", "RL Wheel Object", "RLW_Obj", "raw"),
-    (32, "RLW_RPM", "RL Wheel RPM", "RLW_RPM", "rpm"),
-    (33, "BRAKE_FLUID", "Brake Fluid", "BrkFluid", "raw"),
-    (34, "THROTTLE_LOAD", "Throttle Load", "Throttle", "%"),
-    (35, "BRAKE_LOAD", "Brake Load", "Brake", "%"),
-    (36, "DRS", "DRS", "DRS", "bool"),
-    (37, "GPS_LON", "GPS Longitude", "GPS_Lon", "deg"),
-    (38, "GPS_LAT", "GPS Latitude", "GPS_Lat", "deg"),
-    (39, "GPS_SPD", "GPS Speed", "GPS_Spd", "kph"),
-    (40, "GPS_FIX", "GPS Fix", "GPS_Fix", "bool"),
-    (41, "ECT", "Engine Coolant Temp", "ECT", "C"),
-    (42, "OIL_PSR", "Oil Pressure", "Oil_Prs", "kPa"),
-    (43, "TPS", "TPS", "TPS", "%"),
-    (44, "APS", "APS", "APS", "%"),
-    (45, "DRIVEN_WSPD", "Driven Wheel Speed", "DrWSpeed", "kph"),
-    (46, "TESTNO", "Test Number", "TestNo", "num"),
-    (47, "DTC_FLW", "DTC FL Wheel", "DTC_FLW", "code"),
-    (48, "DTC_FRW", "DTC FR Wheel", "DTC_FRW", "code"),
-    (49, "DTC_RLW", "DTC RL Wheel", "DTC_RLW", "code"),
-    (50, "DTC_RRW", "DTC RR Wheel", "DTC_RRW", "code"),
-    (51, "DTC_FLSG", "DTC FL Strain", "DTC_FLSG", "code"),
-    (52, "DTC_FRSG", "DTC FR Strain", "DTC_FRSG", "code"),
-    (53, "DTC_RLSG", "DTC RL Strain", "DTC_RLSG", "code"),
-    (54, "DTC_RRSG", "DTC RR Strain", "DTC_RRSG", "code"),
-    (55, "DTC_IMU", "DTC IMU", "DTC_IMU", "code"),
-    (56, "GPS_0_", "GPS 0", "GPS_0", "raw"),
-    (57, "GPS_1_", "GPS 1", "GPS_1", "raw"),
-    (58, "CH_COUNT", "Channel Count", "CH_Count", "num"),
-    (59, "FR_Wheel_Speed", "FR Wheel Speed", "FR_wspd", "kph"),
-    (60, "FL_Wheel_Speed", "FL Wheel Speed", "FL_wspd", "kph"),
+    (17, "CG_X_ACCEL", "CG X Accel", "CG_X", "G"),
+    (18, "CG_Y_ACCEL", "CG Y Accel", "CG_Y", "G"),
+    (19, "CG_Z_ACCEL", "CG Z Accel", "CG_Z", "G"),
+    (20, "FR_SG", "FR Strain Gauge", "FR_SG", "raw"),
+    (21, "FL_SG", "FL Strain Gauge", "FL_SG", "raw"),
+    (22, "RL_SG", "RL Strain Gauge", "RL_SG", "raw"),
+    (23, "RR_SG", "RR Strain Gauge", "RR_SG", "raw"),
+    (24, "FLW_AMB", "FL Wheel Ambient", "FLW_Amb", "C"),
+    (25, "FLW_OBJ", "FL Wheel Object", "FLW_Obj", "raw"),
+    (26, "FLW_RPM", "FL Wheel RPM", "FLW_RPM", "rpm"),
+    (27, "FRW_AMB", "FR Wheel Ambient", "FRW_Amb", "C"),
+    (28, "FRW_OBJ", "FR Wheel Object", "FRW_Obj", "raw"),
+    (29, "FRW_RPM", "FR Wheel RPM", "FRW_RPM", "rpm"),
+    (30, "RRW_AMB", "RR Wheel Ambient", "RRW_Amb", "C"),
+    (31, "RRW_OBJ", "RR Wheel Object", "RRW_Obj", "raw"),
+    (32, "RRW_RPM", "RR Wheel RPM", "RRW_RPM", "rpm"),
+    (33, "RLW_AMB", "RL Wheel Ambient", "RLW_Amb", "C"),
+    (34, "RLW_OBJ", "RL Wheel Object", "RLW_Obj", "raw"),
+    (35, "RLW_RPM", "RL Wheel RPM", "RLW_RPM", "rpm"),
+    (36, "BRAKE_FLUID", "Brake Fluid", "BrkFluid", "raw"),
+    (37, "THROTTLE_LOAD", "Throttle Load", "Throttle", "%"),
+    (38, "BRAKE_LOAD", "Brake Load", "Brake", "%"),
+    (39, "DRS", "DRS", "DRS", "bool"),
+    (40, "GPS_LON", "GPS Longitude", "GPS_Lon", "deg"),
+    (41, "GPS_LAT", "GPS Latitude", "GPS_Lat", "deg"),
+    (42, "GPS_SPD", "GPS Speed", "GPS_Spd", "kph"),
+    (43, "GPS_FIX", "GPS Fix", "GPS_Fix", "bool"),
+    (44, "ECT", "Engine Coolant Temp", "ECT", "C"),
+    (45, "OIL_PSR", "Oil Pressure", "Oil_Prs", "kPa"),
+    (46, "TPS", "TPS", "TPS", "%"),
+    (47, "APS", "APS", "APS", "%"),
+    (48, "DRIVEN_WSPD", "Driven Wheel Speed", "DrWSpeed", "kph"),
+    (49, "TESTNO", "Test Number", "TestNo", "num"),
+    (50, "DTC_FLW", "DTC FL Wheel", "DTC_FLW", "code"),
+    (51, "DTC_FRW", "DTC FR Wheel", "DTC_FRW", "code"),
+    (52, "DTC_RLW", "DTC RL Wheel", "DTC_RLW", "code"),
+    (53, "DTC_RRW", "DTC RR Wheel", "DTC_RRW", "code"),
+    (54, "DTC_FLSG", "DTC FL Strain", "DTC_FLSG", "code"),
+    (55, "DTC_FRSG", "DTC FR Strain", "DTC_FRSG", "code"),
+    (56, "DTC_RLSG", "DTC RL Strain", "DTC_RLSG", "code"),
+    (57, "DTC_RRSG", "DTC RR Strain", "DTC_RRSG", "code"),
+    (58, "DTC_IMU", "DTC IMU", "DTC_IMU", "code"),
+    (59, "GPS_0_", "GPS 0", "GPS_0", "raw"),
+    (60, "GPS_1_", "GPS 1", "GPS_1", "raw"),
+    (61, "CH_COUNT", "Channel Count", "CH_Count", "num"),
+    (62, "FR_Wheel_Speed", "FR Wheel Speed", "FR_wspd", "kph"),
+    (63, "FL_Wheel_Speed", "FL Wheel Speed", "FL_wspd", "kph")
 ]
 
 
@@ -109,6 +113,7 @@ def read_csv_file(csv_path, max_samples=None):
 
 def convert_csv_to_motec(csv_path, output_filename, max_samples=None):
     """Convert CSV to MoTeC .ld file using SDM26 channel mapping."""
+    start_time = time.perf_counter()
     print("Converting CSV to MoTeC (SDM26)")
     print("=" * 60)
 
@@ -210,6 +215,9 @@ def convert_csv_to_motec(csv_path, output_filename, max_samples=None):
     print(f"  Size: {file_size_mb:.1f} MB")
     print(f"  Channels: {len(channels_added)}")
     print(f"  Samples: {sample_count}")
+    # Print elapsed time for this conversion
+    elapsed = time.perf_counter() - start_time
+    print(f"  Time: {elapsed:.2f} s")
 
     return str(output_path)
 
@@ -239,13 +247,22 @@ def main():
         print('Error: Input must be a CSV file or a folder containing CSVs.')
         sys.exit(1)
 
+    # Batch timer
+    batch_start = time.perf_counter()
+    processed = 0
     for csv_file in csv_files:
         csv_basename = Path(csv_file).stem
         output_filename = f"{csv_basename}.ld"
         output_path = convert_csv_to_motec(csv_file, output_filename, args.samples)
+        processed += 1
         print('\n' + '=' * 60)
         print('DONE! Load in MoTeC i2:')
         print(f'  File location: {output_path}')
+
+    total_elapsed = time.perf_counter() - batch_start
+    print('\n' + '=' * 60)
+    print(f'Total files processed: {processed}')
+    print(f'Total process time: {total_elapsed:.2f} s')
 
 
 if __name__ == '__main__':
