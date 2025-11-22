@@ -20,12 +20,12 @@ def translate_linear_acc( csv_file: str ) :
     df = pd.read_csv( csv_file )
 
     t = df[ 'TS' ].to_numpy()
-    ax_IMU = df[ 'IMU_X_ACCEL' ].to_numpy()
-    ay_IMU = df[ 'IMU_Y_ACCEL' ].to_numpy()
-    az_IMU = df[ 'IMU_Z_ACCEL' ].to_numpy()
-    gz = df[ 'IMU_Z_GYRO' ].to_numpy()
+    ax_IMU = df[ 'IMU_X_ACCEL' ].to_numpy() / 1000      # convert from mg to g
+    ay_IMU = df[ 'IMU_Y_ACCEL' ].to_numpy() / 1000      # convert from mg to g
+    az_IMU = df[ 'IMU_Z_ACCEL' ].to_numpy() / 1000      # convert from mg to g
+    gz = df[ 'IMU_Z_GYRO' ].to_numpy() / 1000           # convert from mdps to dps
 
-    # IMU x coordinate in meters
+    # IMU x coordinate in meters (to be adjusted based on SDM25, SDM26)
     x_IMU = 0.5
 
     # Linear x acceleration correction
@@ -39,9 +39,12 @@ def translate_linear_acc( csv_file: str ) :
 
     # Linear y acceleration correction
     ay_CG = ay_IMU - ( dt_gz * x_IMU )
-    
-    df.insert( loc=17, column='CG_X_ACCEL', value=ax_CG )
-    df.insert( loc=18, column='CG_Y_ACCEL', value=ay_CG )
-    df.insert( loc=19, column='CG_Z_ACCEL', value=az_IMU )
 
+    # Insert new columns after IMU_Z_GYRO
+    index = df.columns.get_loc( 'IMU_Z_GYRO' ) + 1
+    
+    df.insert( loc=index, column='CG_X_ACCEL', value=ax_CG * 1000 )   # convert back to mg
+    df.insert( loc=index+1, column='CG_Y_ACCEL', value=ay_CG * 1000 )   # convert back to mg
+    df.insert( loc=index+2, column='CG_Z_ACCEL', value=az_IMU * 1000 )   # convert back to mg
+    
     df.to_csv( csv_file )
