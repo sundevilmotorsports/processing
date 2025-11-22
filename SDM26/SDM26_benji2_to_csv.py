@@ -6,6 +6,7 @@ import numpy as np
 import os
 import csv
 from devices import create_devices, configure_devices
+from imu_displacement import translate_linear_acc
 
 
 def parseBenji2File(input_dir: str, output_dir: str, session: str):
@@ -106,6 +107,9 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
                 # Write the current row to the CSV file
                 csv.write(','.join(str(val) for val in outputList) + "\n")
 
+        # Adds 3 channels to csv file: CG_X_ACCEL, CG_Y_ACCEL, CG_Z_ACCEL
+        translate_linear_acc( csv_path )
+        
 
 
 
