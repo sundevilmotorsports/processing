@@ -66,9 +66,9 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
             case "STEERING":
                 device.conversion_factor = lambda v: ((0.084769) * (v) + (-152.846451))
-            case "FLSHOCK":
-                device.conversion_factor = lambda v: ((-0.018444) * (v) + (75.894221))
             case "FRSHOCK":
+                device.conversion_factor = lambda v: ((-0.018444) * (v) + (75.894221))
+            case "FLSHOCK":
                 device.conversion_factor = lambda v: ((-0.018586) * (v) + (76.399026))
             case "RLSHOCK":
                 device.conversion_factor = lambda v: ((-0.018600) * (v) + (76.618397))
