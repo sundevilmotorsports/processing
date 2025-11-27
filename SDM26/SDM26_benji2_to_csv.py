@@ -151,4 +151,4 @@ def filter_duplicate_headers(header_str: str) -> tuple[str, list[int]]:
 
 
             
-parseBenji2File("data/skidpad_test_11_9", "processed", "new_skidpad_test_11_9")
+parseBenji2File("data/test_11_22_post_powfix", "processed", "test_11_22_post_powfix")

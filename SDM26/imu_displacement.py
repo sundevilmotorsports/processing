@@ -20,10 +20,12 @@ def translate_linear_acc( csv_file: str ) :
     df = pd.read_csv( csv_file )
 
     t = df[ 'TS' ].to_numpy()
-    ax_IMU = df[ 'IMU_X_ACCEL' ].to_numpy() / 1000      # convert from mg to g
-    ay_IMU = df[ 'IMU_Y_ACCEL' ].to_numpy() / 1000      # convert from mg to g
-    az_IMU = df[ 'IMU_Z_ACCEL' ].to_numpy() / 1000      # convert from mg to g
-    gz = df[ 'IMU_Z_GYRO' ].to_numpy() / 1000           # convert from mdps to dps
+
+    # Opted to Output CSV in G rather than mG
+    ax_IMU = df[ 'IMU_X_ACCEL' ].to_numpy() #/ 1000      # convert from mg to g
+    ay_IMU = df[ 'IMU_Y_ACCEL' ].to_numpy() #/ 1000      # convert from mg to g
+    az_IMU = df[ 'IMU_Z_ACCEL' ].to_numpy() #/ 1000      # convert from mg to g
+    gz = df[ 'IMU_Z_GYRO' ].to_numpy() #/ 1000           # convert from mdps to dps
 
     # IMU x coordinate in meters (to be adjusted based on SDM25, SDM26)
     x_IMU = 0.5

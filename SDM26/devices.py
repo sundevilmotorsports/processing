@@ -57,13 +57,13 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.conversion_factor = lambda v: (v)
             case "IMU_X_ACCEL" | "IMU_Y_ACCEL" | "IMU_Z_ACCEL":
                 device.signed = True
-                device.conversion_factor = lambda v: (v * 0.122)
+                device.conversion_factor = lambda v: (v * 0.122) / 1000
             case "IMU_X_GYRO" | "IMU_Y_GYRO" | "IMU_Z_GYRO":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 17.50)
             case "FLW_AMB" | "FRW_AMB" | "RLW_AMB" | "RRW_AMB" | \
                  "FLW_OBJ" | "FRW_OBJ" | "RLW_OBJ" | "RRW_OBJ":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15)
+                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
             case "STEERING":
                 device.conversion_factor = lambda v: ((0.084769) * (v) + (-152.846451))
             case "FRSHOCK":
