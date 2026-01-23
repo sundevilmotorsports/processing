@@ -19,3 +19,6 @@ SDM26/process_benji2_motec.py
 test_session_data/
 /SDM26/output
 SDM26/inspect_ld.py
+SDM26/SDM26_processing_gui.py
+SDM26/SDM26_benji2_to_csv.py
+SDM26/SDM26_csv_to_motec.py
