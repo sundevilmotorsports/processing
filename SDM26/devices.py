@@ -74,5 +74,54 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.conversion_factor = lambda v: ((-0.018600) * (v) + (76.618397))
             case "RRSHOCK":
                 device.conversion_factor = lambda v: ((-0.018498) * (v) + (76.591013))
-            case _:
-                pass
+            case "SLIP_ANG_1_":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            case "SLIP_ANG_2_":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            case "SLIP_ANG_3_":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            case "SLIP_ANG_4_":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            case "SLIP_ANG_5_":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            case "SLIP_ANG_6_":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            case "LR_X_Force":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.274424979248047) * (v))
+            case "LR_Y_Force":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.137212489624023) * (v))
+            case "LR_Z_Force":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.274424979248047) * (v))
+            case "LR_MX_Moment":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.135051663024902) * (v))
+            case "LR_MY_Moment":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.135051663024902) * (v))
+            case "LR_MZ_Moment":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.135051663024902) * (v))
+            case "LR_Velocity":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.06103515625) * (v))
+            case "LR_Position":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.010986328125) * (v))
+            case "LR_X_Acceleration":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0030517578125) * (v))
+            case "LR_Y_Acceleration":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0030517578125) * (v))
+            case "LR_Z_Acceleration":
+                device.signed = True
+                device.conversion_factor = lambda v: ((0.0030517578125) * (v))

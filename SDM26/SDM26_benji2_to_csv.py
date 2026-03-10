@@ -99,10 +99,10 @@ def parseBenji2File(input_dir: str, output_dir: str, session: str):
                     if data == None:
                         break
 
-                    outputList[device.column_index] = device.getData(data)
+                    outputList[device.column_index] = device.getData(data) # pyright: ignore[reportArgumentType, reportCallIssue]
                 last=outputList[0]
                 count += 1
-                outputList.insert(0,count)
+                outputList.insert(0,count) # type: ignore
 
                 # Write the current row to the CSV file
                 csv.write(','.join(str(val) for val in outputList) + "\n")
@@ -151,4 +151,4 @@ def filter_duplicate_headers(header_str: str) -> tuple[str, list[int]]:
 
 
             
-parseBenji2File("data/test_11_22_post_powfix", "processed", "test_11_22_post_powfix")
+parseBenji2File("data/new_ver_test", "processed", "new_ver_test")
