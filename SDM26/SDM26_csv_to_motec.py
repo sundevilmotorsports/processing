@@ -13,71 +13,13 @@ except ImportError as e:
     print(f"Make sure motec_ld.py is in the same folder")
     sys.exit(1)
 
-# ALL channels from CSV (header names only)
-ALL_CHANNELS = [
-    # (csv_header_name, display_name, short_name, units)
-    ("TS", "Time", "Time", "s"),
-    ("F_BRAKEPRESSURE", "Front Brake Pressure", "F_BrkPrs", "kPa"),
-    ("R_BRAKEPRESSURE", "Rear Brake Pressure", "R_BrkPrs", "kPa"),
-    ("STEERING", "Steering", "Steering", "deg"),
-    ("FLSHOCK", "FL Shock", "FL_Shock", "mm"),
-    ("FRSHOCK", "FR Shock", "FR_Shock", "mm"),
-    ("RRSHOCK", "RR Shock", "RR_Shock", "mm"),
-    ("RLSHOCK", "RL Shock", "RL_Shock", "mm"),
-    ("CURRENT", "Current", "Current", "A"),
-    ("BATTERY", "Battery Voltage", "Battery", "V"),
-    ("IMU_X_ACCEL", "IMU X Accel", "IMU_X", "G"),
-    ("IMU_Y_ACCEL", "IMU Y Accel", "IMU_Y", "G"),
-    ("IMU_Z_ACCEL", "IMU Z Accel", "IMU_Z", "G"),
-    ("IMU_X_GYRO", "IMU X Gyro", "Gyro_X", "deg/s"),
-    ("IMU_Y_GYRO", "IMU Y Gyro", "Gyro_Y", "deg/s"),
-    ("IMU_Z_GYRO", "IMU Z Gyro", "Gyro_Z", "deg/s"),
-    ("FR_SG", "FR Strain Gauge", "FR_SG", "raw"),
-    ("FL_SG", "FL Strain Gauge", "FL_SG", "raw"),
-    ("RL_SG", "RL Strain Gauge", "RL_SG", "raw"),
-    ("RR_SG", "RR Strain Gauge", "RR_SG", "raw"),
-    ("FLW_AMB", "FL Wheel Ambient", "FLW_Amb", "C"),
-    ("FLW_OBJ", "FL Wheel Object", "FLW_Obj", "raw"),
-    ("FLW_RPM", "FL Wheel RPM", "FLW_RPM", "rpm"),
-    ("FRW_AMB", "FR Wheel Ambient", "FRW_Amb", "C"),
-    ("FRW_OBJ", "FR Wheel Object", "FRW_Obj", "raw"),
-    ("FRW_RPM", "FR Wheel RPM", "FRW_RPM", "rpm"),
-    ("RRW_AMB", "RR Wheel Ambient", "RRW_Amb", "C"),
-    ("RRW_OBJ", "RR Wheel Object", "RRW_Obj", "raw"),
-    ("RRW_RPM", "RR Wheel RPM", "RRW_RPM", "rpm"),
-    ("RLW_AMB", "RL Wheel Ambient", "RLW_Amb", "C"),
-    ("RLW_OBJ", "RL Wheel Object", "RLW_Obj", "raw"),
-    ("RLW_RPM", "RL Wheel RPM", "RLW_RPM", "rpm"),
-    ("BRAKE_FLUID", "Brake Fluid", "BrkFluid", "raw"),
-    ("THROTTLE_LOAD", "Throttle Load", "Throttle", "%"),
-    ("BRAKE_LOAD", "Brake Load", "Brake", "%"),
-    ("DRS", "DRS", "DRS", "bool"),
-    ("GPS_LON", "GPS Longitude", "GPS_Lon", "deg"),
-    ("GPS_LAT", "GPS Latitude", "GPS_Lat", "deg"),
-    ("GPS_SPD", "GPS Speed", "GPS_Spd", "kph"),
-    ("GPS_FIX", "GPS Fix", "GPS_Fix", "bool"),
-    ("ECT", "Engine Coolant Temp", "ECT", "C"),
-    ("OIL_PSR", "Oil Pressure", "Oil_Prs", "kPa"),
-    ("TPS", "TPS", "TPS", "%"),
-    ("APS", "APS", "APS", "%"),
-    ("DRIVEN_WSPD", "Driven Wheel Speed", "DrWSpeed", "kph"),
-    ("TESTNO", "Test Number", "TestNo", "num"),
-    ("DTC_FLW", "DTC FL Wheel", "DTC_FLW", "code"),
-    ("DTC_FRW", "DTC FR Wheel", "DTC_FRW", "code"),
-    ("DTC_RLW", "DTC RL Wheel", "DTC_RLW", "code"),
-    ("DTC_RRW", "DTC RR Wheel", "DTC_RRW", "code"),
-    ("DTC_FLSG", "DTC FL Strain", "DTC_FLSG", "code"),
-    ("DTC_FRSG", "DTC FR Strain", "DTC_FRSG", "code"),
-    ("DTC_RLSG", "DTC RL Strain", "DTC_RLSG", "code"),
-    ("DTC_RRSG", "DTC RR Strain", "DTC_RRSG", "code"),
-    ("DTC_IMU", "DTC IMU", "DTC_IMU", "code"),
-    ("GPS_0_", "GPS 0", "GPS_0", "raw"),
-    ("GPS_1_", "GPS 1", "GPS_1", "raw"),
-    ("CH_COUNT", "Channel Count", "CH_Count", "num"),
-    ("FR_Wheel_Speed", "FR Wheel Speed", "FR_wspd", "kph"),
-    ("FL_Wheel_Speed", "FL Wheel Speed", "FL_wspd", "kph")
-
-]
+# Import device configuration utilities
+try:
+    from devices import device_data, create_devices, configure_devices, generate_channel_list
+except ImportError as e:
+    print(f"Error importing devices module: {e}")
+    print(f"Make sure devices.py is in the same folder")
+    sys.exit(1)
 
 
 def read_csv_file(csv_path, max_samples=None):
@@ -105,11 +47,27 @@ def convert_csv_to_motec_fixed(csv_path, output_filename, max_samples=None):
 
     header, data = read_csv_file(csv_path, max_samples)
 
+    # Generate channel definitions dynamically from CSV header
+    print(f"\nGenerating channel definitions from CSV header...")
+    
+    # Create device_data objects from CSV header
+    device_names = [h.strip() for h in header]
+    data_sizes = [4] * len(device_names)  # Default 4-byte size for all channels
+    devices = create_devices(device_names, data_sizes)
+    
+    # Configure devices with units, display names, and conversion factors
+    configure_devices(devices)
+    
+    # Generate channel list in expected format
+    ALL_CHANNELS = generate_channel_list(devices)
+    
+    print(f"Generated {len(ALL_CHANNELS)} channel definitions from devices.py")
+
     # Build a case-insensitive header map for lookup
     header_map = {h.strip().lower(): idx for idx, h in enumerate(header)} if header else {}
 
     # Determine time column index (prefer header name "TS" from ALL_CHANNELS)
-    time_col_name = ALL_CHANNELS[0][0]
+    time_col_name = ALL_CHANNELS[0][0] if ALL_CHANNELS else "TS"
 
     # Default frequency
     freq = 500
@@ -136,12 +94,12 @@ def convert_csv_to_motec_fixed(csv_path, output_filename, max_samples=None):
     log.driver = "Driver"
     log.vehicle = "Vehicle"
     log.venue = "Track"
-    log.comment = "Fixed - All Channels"
+    log.comment = "Dynamic Channels from devices.py"
     
     # Create event
     log.event = MotecEvent({
         "name": "Full Data Session",
-        "session": "All Channels Fixed",
+        "session": "All Channels from devices.py",
         "comment": f"All {len(ALL_CHANNELS)} channels with decplaces=0",
         "venuepos": 0
     })
