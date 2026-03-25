@@ -49,4 +49,4 @@ def translate_linear_acc( csv_file: str ) :
     df.insert( loc=index+1, column='CG_Y_ACCEL', value=ay_CG * 1000 )   # convert back to mg
     df.insert( loc=index+2, column='CG_Z_ACCEL', value=az_IMU * 1000 )   # convert back to mg
     
-    df.to_csv( csv_file )
+    df.to_csv( csv_file, index=False )
