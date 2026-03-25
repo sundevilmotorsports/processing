@@ -62,27 +62,27 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "Rear Brake Pressure"
                 device.short_name = "R_BrkPrs"
             case "STEERING":
-                device.conversion_factor = lambda v: ((0.084769) * (v) + (-152.846451))
+                device.conversion_factor = lambda v: ((0.084769) * ( (v) - (1720) ) )
                 device.units = "deg"
                 device.display_name = "Steering"
                 device.short_name = "Steering"
             case "FLSHOCK":
-                device.conversion_factor = lambda v: ((-0.018586) * (v) + (76.399026))
+                device.conversion_factor = lambda v: ((-0.018586) * ( (v) - (76.399026/(-0.018586)) ) ) # Change the value added to (v) to move zero
                 device.units = "mm"
                 device.display_name = "FL Shock"
                 device.short_name = "FL_Shock"
             case "FRSHOCK":
-                device.conversion_factor = lambda v: ((-0.018444) * (v) + (75.894221))
+                device.conversion_factor = lambda v: ((-0.018444) * ( (v) - (75.894221/(-0.018444)) ) )
                 device.units = "mm"
                 device.display_name = "FR Shock"
                 device.short_name = "FR_Shock"
             case "RRSHOCK":
-                device.conversion_factor = lambda v: ((-0.018498) * (v) + (76.591013))
+                device.conversion_factor = lambda v: ((-0.018498) * ( (v) - (76.591013/(-0.018498)) ) )
                 device.units = "mm"
                 device.display_name = "RR Shock"
                 device.short_name = "RR_Shock"
             case "RLSHOCK":
-                device.conversion_factor = lambda v: ((-0.018600) * (v) + (76.618397))
+                device.conversion_factor = lambda v: ((-0.018600) * ( (v) - (76.618397/(-0.018600)) ) )
                 device.units = "mm"
                 device.display_name = "RL Shock"
                 device.short_name = "RL_Shock"

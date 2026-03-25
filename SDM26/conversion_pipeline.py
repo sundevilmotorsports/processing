@@ -149,7 +149,7 @@ def convert_benji2_file_to_csv(
             csv_file.write(",".join(str(value) if value is not None else "" for value in output_row) + "\n")
             written_rows += 1
 
-    translate_linear_acc(str(csv_path))
+    # translate_linear_acc(str(csv_path))
     _emit_log(logger, f"CSV written: {csv_path} ({written_rows} rows)")
     return csv_path
 
