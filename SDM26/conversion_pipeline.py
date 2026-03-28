@@ -15,6 +15,10 @@ LogCallback = Callable[[str], None]
 ProgressCallback = Callable[[int, int, str], None]
 
 
+class EmptyBenji2FileError(ValueError):
+    """Raised when a BENJI2 file has no readable log payload."""
+
+
 @dataclass(frozen=True)
 class OutputLayout:
     root_dir: Path
@@ -96,18 +100,19 @@ def convert_benji2_file_to_csv(
 ) -> Path:
     benji_path = Path(benji_path)
     csv_path = Path(csv_path)
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
 
     _emit_log(logger, f"BENJI2 -> CSV: {benji_path.name}")
 
-    with open(benji_path, "br") as benji_file, open(csv_path, "w", newline="") as csv_file:
+    with open(benji_path, "br") as benji_file:
         header_length_bytes = benji_file.read(4)
+        if not header_length_bytes:
+            raise EmptyBenji2FileError(f"Skipping empty BENJI2 file: {benji_path.name}")
         if len(header_length_bytes) != 4:
             raise ValueError(f"Missing BENJI2 header length in {benji_path.name}")
 
         header_length = int.from_bytes(header_length_bytes, "little", signed=False) - 1
         if header_length <= 0:
-            raise ValueError(f"Empty log file: {benji_path.name}")
+            raise EmptyBenji2FileError(f"Skipping empty BENJI2 file: {benji_path.name}")
 
         header_data = benji_file.read(header_length)
         try:
@@ -120,34 +125,36 @@ def convert_benji2_file_to_csv(
         devices = create_devices(device_names, data_sizes)
         configure_devices(devices)
 
-        csv_file.write("SAMPLE," + filtered_header + "\n")
-        benji_file.read(1)
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(csv_path, "w", newline="") as csv_file:
+            csv_file.write("SAMPLE," + filtered_header + "\n")
+            benji_file.read(1)
 
-        sample_number = 0
-        written_rows = 0
+            sample_number = 0
+            written_rows = 0
 
-        while True:
-            output_row = [None] * len(devices)
-            eof = False
+            while True:
+                output_row = [None] * len(devices)
+                eof = False
 
-            for device in devices:
-                if device.name == "CH_COUNT":
+                for device in devices:
+                    if device.name == "CH_COUNT":
+                        break
+
+                    raw_data = benji_file.read(device.byte_size)
+                    if len(raw_data) != device.byte_size:
+                        eof = True
+                        break
+
+                    output_row[device.column_index] = device.getData(raw_data)
+
+                if eof:
                     break
 
-                raw_data = benji_file.read(device.byte_size)
-                if len(raw_data) != device.byte_size:
-                    eof = True
-                    break
-
-                output_row[device.column_index] = device.getData(raw_data)
-
-            if eof:
-                break
-
-            sample_number += 1
-            output_row.insert(0, sample_number)
-            csv_file.write(",".join(str(value) if value is not None else "" for value in output_row) + "\n")
-            written_rows += 1
+                sample_number += 1
+                output_row.insert(0, sample_number)
+                csv_file.write(",".join(str(value) if value is not None else "" for value in output_row) + "\n")
+                written_rows += 1
 
     # translate_linear_acc(str(csv_path))
     _emit_log(logger, f"CSV written: {csv_path} ({written_rows} rows)")
@@ -171,7 +178,12 @@ def convert_benji2_inputs_to_csv(
 
     for index, benji_path in enumerate(benji_files, start=1):
         csv_path = csv_output_dir / f"{benji_path.stem}.csv"
-        convert_benji2_file_to_csv(benji_path, csv_path, logger=logger)
+        try:
+            convert_benji2_file_to_csv(benji_path, csv_path, logger=logger)
+        except EmptyBenji2FileError as exc:
+            _emit_log(logger, str(exc))
+            _emit_progress(progress_callback, index, total, f"Skipped empty file: {benji_path.name}")
+            continue
         outputs.append(csv_path)
         _emit_progress(progress_callback, index, total, f"CSV complete: {benji_path.name}")
 
@@ -385,7 +397,13 @@ def convert_benji2_inputs_to_outputs(
         _emit_log(logger, f"[{index}/{len(benji_files)}] Processing {benji_path.name}")
 
         csv_path = layout.csv_dir / f"{benji_path.stem}.csv"
-        convert_benji2_file_to_csv(benji_path, csv_path, logger=logger)
+        try:
+            convert_benji2_file_to_csv(benji_path, csv_path, logger=logger)
+        except EmptyBenji2FileError as exc:
+            _emit_log(logger, str(exc))
+            completed_steps += 2
+            _emit_progress(progress_callback, completed_steps, total_steps, f"Skipped empty file: {benji_path.name}")
+            continue
         completed_steps += 1
         _emit_progress(progress_callback, completed_steps, total_steps, f"CSV complete: {benji_path.name}")
 
@@ -401,6 +419,7 @@ def convert_benji2_inputs_to_outputs(
 
 __all__ = [
     "ConversionArtifacts",
+    "EmptyBenji2FileError",
     "OutputLayout",
     "build_output_layout",
     "collect_files",
