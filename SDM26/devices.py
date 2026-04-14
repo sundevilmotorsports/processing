@@ -90,7 +90,7 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.conversion_factor = 1.25
                 device.signed = True
                 device.units = "A"
-                device.display_name = "Current"
+                device.display_name = "Supplied Current"
                 device.short_name = "Current"
             case "BATTERY":
                 device.conversion_factor = 1.25 / 1000
@@ -101,19 +101,19 @@ def configure_devices(devices: List[device_data]) -> None:
             case "IMU_X_ACCEL":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 0.122) / 1000
-                device.units = "G"
+                device.units = "g"
                 device.display_name = "IMU X Accel"
                 device.short_name = "IMU_X"
             case "IMU_Y_ACCEL":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 0.122) / 1000
-                device.units = "G"
+                device.units = "g"
                 device.display_name = "IMU Y Accel"
                 device.short_name = "IMU_Y"
             case "IMU_Z_ACCEL":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 0.122) / 1000
-                device.units = "G"
+                device.units = "g"
                 device.display_name = "IMU Z Accel"
                 device.short_name = "IMU_Z"
             case "IMU_X_GYRO":
@@ -141,27 +141,27 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.short_name = "FR_SG"
             case "FL_SG":
                 device.conversion_factor = lambda v: (-11052026.1 * v + 2606.22253)
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "FL Strain Gauge"
                 device.short_name = "FL_SG"
             case "RL_SG":
                 device.conversion_factor = lambda v: (-1401922.44 * v + 92026.0137)
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "RL Strain Gauge"
                 device.short_name = "RL_SG"
             case "RR_SG":
                 device.conversion_factor = lambda v: (v)
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "RR Strain Gauge"
                 device.short_name = "RR_SG"
             case "FLW_AMB":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "C"
+                device.units = "deg C"
                 device.display_name = "FL Wheel Ambient"
                 device.short_name = "FLW_Amb"
             case "FLW_OBJ":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "FL Wheel Object"
                 device.short_name = "FLW_Obj"
             case "FLW_RPM":
@@ -170,12 +170,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.short_name = "FLW_RPM"
             case "FRW_AMB":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "C"
+                device.units = "deg C"
                 device.display_name = "FR Wheel Ambient"
                 device.short_name = "FRW_Amb"
             case "FRW_OBJ":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "FR Wheel Object"
                 device.short_name = "FRW_Obj"
             case "FRW_RPM":
@@ -184,12 +184,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.short_name = "FRW_RPM"
             case "RRW_AMB":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "C"
+                device.units = "deg C"
                 device.display_name = "RR Wheel Ambient"
                 device.short_name = "RRW_Amb"
             case "RRW_OBJ":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "RR Wheel Object"
                 device.short_name = "RRW_Obj"
             case "RRW_RPM":
@@ -198,12 +198,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.short_name = "RRW_RPM"
             case "RLW_AMB":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "C"
+                device.units = "deg C"
                 device.display_name = "RL Wheel Ambient"
                 device.short_name = "RLW_Amb"
             case "RLW_OBJ":
                 device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "RL Wheel Object"
                 device.short_name = "RLW_Obj"
             case "RLW_RPM":
@@ -211,7 +211,7 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "RL Wheel RPM"
                 device.short_name = "RLW_RPM"
             case "BRAKE_FLUID":
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "Brake Fluid"
                 device.short_name = "BrkFluid"
             case "THROTTLE_LOAD":
@@ -223,7 +223,7 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "Brake Load"
                 device.short_name = "Brake"
             case "DRS":
-                device.units = "bool"
+                device.units = ""
                 device.display_name = "DRS"
                 device.short_name = "DRS"
             case "GPS_LON":
@@ -235,11 +235,11 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "GPS Latitude"
                 device.short_name = "GPS_Lat"
             case "GPS_SPD":
-                device.units = "kph"
+                device.units = "km/h"
                 device.display_name = "GPS Speed"
                 device.short_name = "GPS_Spd"
             case "GPS_FIX":
-                device.units = "bool"
+                device.units = ""
                 device.display_name = "GPS Fix"
                 device.short_name = "GPS_Fix"
             case "ENGINE_SPEED":
@@ -350,63 +350,63 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "ECU Vertical Accel"
                 device.short_name = "G_Vert"
             case "TESTNO":
-                device.units = "num"
+                device.units = ""
                 device.display_name = "Test Number"
                 device.short_name = "TestNo"
             case "DTC_FLW":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC FL Wheel"
                 device.short_name = "DTC_FLW"
             case "DTC_FRW":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC FR Wheel"
                 device.short_name = "DTC_FRW"
             case "DTC_RLW":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC RL Wheel"
                 device.short_name = "DTC_RLW"
             case "DTC_RRW":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC RR Wheel"
                 device.short_name = "DTC_RRW"
             case "DTC_FLSG":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC FL Strain"
                 device.short_name = "DTC_FLSG"
             case "DTC_FRSG":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC FR Strain"
                 device.short_name = "DTC_FRSG"
             case "DTC_RLSG":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC RL Strain"
                 device.short_name = "DTC_RLSG"
             case "DTC_RRSG":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC RR Strain"
                 device.short_name = "DTC_RRSG"
             case "DTC_IMU":
-                device.units = "code"
+                device.units = ""
                 device.display_name = "DTC IMU"
                 device.short_name = "DTC_IMU"
             case "GPS_0_":
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "GPS 0"
                 device.short_name = "GPS_0"
             case "GPS_1_":
-                device.units = "raw"
+                device.units = ""
                 device.display_name = "GPS 1"
                 device.short_name = "GPS_1"
             case "CH_COUNT":
-                device.units = "num"
+                device.units = ""
                 device.display_name = "Channel Count"
                 device.short_name = "CH_Count"
             case "FR_Wheel_Speed":
-                device.units = "kph"
+                device.units = "km/h"
                 device.display_name = "FR Wheel Speed"
                 device.short_name = "FR_wspd"
             case "FL_Wheel_Speed":
-                device.units = "kph"
+                device.units = "km/h"
                 device.display_name = "FL Wheel Speed"
                 device.short_name = "FL_wspd"
 
@@ -498,19 +498,19 @@ def configure_devices(devices: List[device_data]) -> None:
             # case "LR_X_Acceleration":
             #     device.signed = True
             #     device.conversion_factor = lambda v: ((0.0030517578125) * (v))
-            #     device.units = "G"
+            #     device.units = "g"
             #     device.display_name = "LR X Acceleration"
             #     device.short_name = "LR_AX"
             # case "LR_Y_Acceleration":
             #     device.signed = True
             #     device.conversion_factor = lambda v: ((0.0030517578125) * (v))
-            #     device.units = "G"
+            #     device.units = "g"
             #     device.display_name = "LR Y Acceleration"
             #     device.short_name = "LR_AY"
             # case "LR_Z_Acceleration":
             #     device.signed = True
             #     device.conversion_factor = lambda v: ((0.0030517578125) * (v))
-            #     device.units = "G"
+            #     device.units = "g"
             #     device.display_name = "LR Z Acceleration"
             #     device.short_name = "LR_AZ"
 
