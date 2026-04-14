@@ -242,26 +242,113 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.units = "bool"
                 device.display_name = "GPS Fix"
                 device.short_name = "GPS_Fix"
+            case "ENGINE_SPEED":
+                device.conversion_factor = lambda v: v
+                device.units = "rpm"
+                device.display_name = "Engine Speed"
+                device.short_name = "Eng_Spd"
+
             case "ECT":
-                device.units = "C"
+                device.conversion_factor = lambda v: v - 50
+                device.units = "deg C"
                 device.display_name = "Engine Coolant Temp"
                 device.short_name = "ECT"
-            case "OIL_PSR":
+
+            case "OIL_TEMP":
+                device.conversion_factor = lambda v: v - 50
+                device.units = "deg C"
+                device.display_name = "Engine Oil Temp"
+                device.short_name = "Oil_Tmp"
+
+            case "OIL_PRESS":
+                device.conversion_factor = lambda v: v
                 device.units = "kPa"
                 device.display_name = "Oil Pressure"
                 device.short_name = "Oil_Prs"
+
+            case "NEUTRAL_STAT":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Neutral Status"
+                device.short_name = "Neutral_Stat"
+
+            case "LAMBDA":
+                device.conversion_factor = lambda v: 0.01 * v
+                device.units = "Lambda"
+                device.display_name = "Lambda 1"
+                device.short_name = "Lambda"
+
             case "TPS":
+                device.conversion_factor = lambda v: v
                 device.units = "%"
-                device.display_name = "TPS"
+                device.display_name = "Throttle Position"
                 device.short_name = "TPS"
-            case "APS":
+
+            case "GEAR":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Gear Position"
+                device.short_name = "Gear_Pos"
+
+            case "GP_SPEED":
+                device.conversion_factor = lambda v: 0.1 * v
+                device.units = "km/h"
+                device.display_name = "Vehicle Speed"
+                device.short_name = "VSS"
+
+            case "APS_MAIN":
+                device.conversion_factor = lambda v: 0.1 * v
                 device.units = "%"
-                device.display_name = "APS"
+                device.display_name = "APS Main"
                 device.short_name = "APS"
-            case "DRIVEN_WSPD":
-                device.units = "kph"
-                device.display_name = "Driven Wheel Speed"
-                device.short_name = "DrWSpeed"
+
+            case "FUEL_PRESS":
+                device.conversion_factor = lambda v: v
+                device.units = "kPa"
+                device.display_name = "Fuel Pressure"
+                device.short_name = "Fuel_Prs"
+
+            case "ACCEL_FUEL":
+                device.conversion_factor = lambda v: 0.001 * v
+                device.units = "ms"
+                device.display_name = "Accel Fuel"
+                device.short_name = "Accel_Fuel"
+
+            case "ACCUM_DIST":
+                device.conversion_factor = lambda v: 0.1 * v
+                device.units = "km"
+                device.display_name = "Accumulated Distance"
+                device.short_name = "Accum_Dist"
+
+            case "MAP":
+                device.conversion_factor = lambda v: v
+                device.units = "kPa"
+                device.display_name = "Manifold Pressure"
+                device.short_name = "MAP"
+
+            case "AN_TEMP_3_":
+                device.conversion_factor = lambda v: v - 50
+                device.units = "deg C"
+                device.display_name = "AN Temp 3"
+                device.short_name = "AN_T3"
+
+            case "ENG_IMU_X":
+                device.conversion_factor = lambda v: (((v - 65536) if v >= 32768 else v) * 0.001)
+                device.units = "g"
+                device.display_name = "ECU Lateral Accel"
+                device.short_name = "G_Lat"
+
+            case "ENG_IMU_Y":
+                device.conversion_factor = lambda v: (((v - 65536) if v >= 32768 else v) * 0.001)
+                device.units = "g"
+                device.display_name = "ECU Longitudinal Accel"
+                device.short_name = "G_Long"
+
+            case "ENG_IMU_Z":
+                device.conversion_factor = lambda v: (((v - 65536) if v >= 32768 else v) * 0.001)
+                device.units = "g"
+                device.display_name = "ECU Vertical Accel"
+                device.short_name = "G_Vert"
             case "TESTNO":
                 device.units = "num"
                 device.display_name = "Test Number"
@@ -322,108 +409,110 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.units = "kph"
                 device.display_name = "FL Wheel Speed"
                 device.short_name = "FL_wspd"
-            case "SLIP_ANG_1_":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
-                device.units = "deg"
-                device.display_name = "Slip Angle 1"
-                device.short_name = "SlipAng1"
-            case "SLIP_ANG_2_":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
-                device.units = "deg"
-                device.display_name = "Slip Angle 2"
-                device.short_name = "SlipAng2"
-            case "SLIP_ANG_3_":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
-                device.units = "deg"
-                device.display_name = "Slip Angle 3"
-                device.short_name = "SlipAng3"
-            case "SLIP_ANG_4_":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
-                device.units = "deg"
-                device.display_name = "Slip Angle 4"
-                device.short_name = "SlipAng4"
-            case "SLIP_ANG_5_":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
-                device.units = "deg"
-                device.display_name = "Slip Angle 5"
-                device.short_name = "SlipAng5"
-            case "SLIP_ANG_6_":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0013733329264) * (v))
-                device.units = "deg"
-                device.display_name = "Slip Angle 6"
-                device.short_name = "SlipAng6"
-            case "LR_X_Force":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.274424979248047) * (v))
-                device.units = "lbf"
-                device.display_name = "LR X Force"
-                device.short_name = "LR_FX"
-            case "LR_Y_Force":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.137212489624023) * (v))
-                device.units = "lbf"
-                device.display_name = "LR Y Force"
-                device.short_name = "LR_FY"
-            case "LR_Z_Force":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.274424979248047) * (v))
-                device.units = "lbf"
-                device.display_name = "LR Z Force"
-                device.short_name = "LR_FZ"
-            case "LR_MX_Moment":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.135051663024902) * (v))
-                device.units = "lb-ft"
-                device.display_name = "LR MX Moment"
-                device.short_name = "LR_MX"
-            case "LR_MY_Moment":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.135051663024902) * (v))
-                device.units = "lb-ft"
-                device.display_name = "LR MY Moment"
-                device.short_name = "LR_MY"
-            case "LR_MZ_Moment":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.135051663024902) * (v))
-                device.units = "lb-ft"
-                device.display_name = "LR MZ Moment"
-                device.short_name = "LR_MZ"
-            case "LR_Velocity":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.06103515625) * (v))
-                device.units = "rpm"
-                device.display_name = "LR Velocity"
-                device.short_name = "LR_Vel"
-            case "LR_Position":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.010986328125) * (v))
-                device.units = "deg"
-                device.display_name = "LR Position"
-                device.short_name = "LR_Pos"
-            case "LR_X_Acceleration":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0030517578125) * (v))
-                device.units = "G"
-                device.display_name = "LR X Acceleration"
-                device.short_name = "LR_AX"
-            case "LR_Y_Acceleration":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0030517578125) * (v))
-                device.units = "G"
-                device.display_name = "LR Y Acceleration"
-                device.short_name = "LR_AY"
-            case "LR_Z_Acceleration":
-                device.signed = True
-                device.conversion_factor = lambda v: ((0.0030517578125) * (v))
-                device.units = "G"
-                device.display_name = "LR Z Acceleration"
-                device.short_name = "LR_AZ"
+
+            # Old WFT Handlers
+            # case "SLIP_ANG_1_":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "Slip Angle 1"
+            #     device.short_name = "SlipAng1"
+            # case "SLIP_ANG_2_":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "Slip Angle 2"
+            #     device.short_name = "SlipAng2"
+            # case "SLIP_ANG_3_":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "Slip Angle 3"
+            #     device.short_name = "SlipAng3"
+            # case "SLIP_ANG_4_":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "Slip Angle 4"
+            #     device.short_name = "SlipAng4"
+            # case "SLIP_ANG_5_":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "Slip Angle 5"
+            #     device.short_name = "SlipAng5"
+            # case "SLIP_ANG_6_":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0013733329264) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "Slip Angle 6"
+            #     device.short_name = "SlipAng6"
+            # case "LR_X_Force":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.274424979248047) * (v))
+            #     device.units = "lbf"
+            #     device.display_name = "LR X Force"
+            #     device.short_name = "LR_FX"
+            # case "LR_Y_Force":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.137212489624023) * (v))
+            #     device.units = "lbf"
+            #     device.display_name = "LR Y Force"
+            #     device.short_name = "LR_FY"
+            # case "LR_Z_Force":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.274424979248047) * (v))
+            #     device.units = "lbf"
+            #     device.display_name = "LR Z Force"
+            #     device.short_name = "LR_FZ"
+            # case "LR_MX_Moment":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.135051663024902) * (v))
+            #     device.units = "lb-ft"
+            #     device.display_name = "LR MX Moment"
+            #     device.short_name = "LR_MX"
+            # case "LR_MY_Moment":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.135051663024902) * (v))
+            #     device.units = "lb-ft"
+            #     device.display_name = "LR MY Moment"
+            #     device.short_name = "LR_MY"
+            # case "LR_MZ_Moment":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.135051663024902) * (v))
+            #     device.units = "lb-ft"
+            #     device.display_name = "LR MZ Moment"
+            #     device.short_name = "LR_MZ"
+            # case "LR_Velocity":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.06103515625) * (v))
+            #     device.units = "rpm"
+            #     device.display_name = "LR Velocity"
+            #     device.short_name = "LR_Vel"
+            # case "LR_Position":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.010986328125) * (v))
+            #     device.units = "deg"
+            #     device.display_name = "LR Position"
+            #     device.short_name = "LR_Pos"
+            # case "LR_X_Acceleration":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0030517578125) * (v))
+            #     device.units = "G"
+            #     device.display_name = "LR X Acceleration"
+            #     device.short_name = "LR_AX"
+            # case "LR_Y_Acceleration":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0030517578125) * (v))
+            #     device.units = "G"
+            #     device.display_name = "LR Y Acceleration"
+            #     device.short_name = "LR_AY"
+            # case "LR_Z_Acceleration":
+            #     device.signed = True
+            #     device.conversion_factor = lambda v: ((0.0030517578125) * (v))
+            #     device.units = "G"
+            #     device.display_name = "LR Z Acceleration"
+            #     device.short_name = "LR_AZ"
 
 
 def generate_channel_list(devices: List[device_data]) -> List[Tuple[str, str, str, str]]:
