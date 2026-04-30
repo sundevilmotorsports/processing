@@ -62,7 +62,7 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "Rear Brake Pressure"
                 device.short_name = "R_BrkPrs"
             case "STEERING":
-                device.conversion_factor = lambda v: ((0.084769) * ( (v) - (1783) ) )
+                device.conversion_factor = lambda v: ((0.084769) * ( (v) - (1430) ) )
                 device.units = "deg"
                 device.display_name = "Steering"
                 device.short_name = "Steering"
@@ -155,12 +155,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "RR Strain Gauge"
                 device.short_name = "RR_SG"
             case "FLW_AMB":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "deg C"
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
+                device.units = "C"
                 device.display_name = "FL Wheel Ambient"
                 device.short_name = "FLW_Amb"
             case "FLW_OBJ":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
                 device.display_name = "FL Wheel Object"
                 device.short_name = "FLW_Obj"
@@ -169,12 +169,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "FL Wheel RPM"
                 device.short_name = "FLW_RPM"
             case "FRW_AMB":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "deg C"
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
+                device.units = "C"
                 device.display_name = "FR Wheel Ambient"
                 device.short_name = "FRW_Amb"
             case "FRW_OBJ":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
                 device.display_name = "FR Wheel Object"
                 device.short_name = "FRW_Obj"
@@ -183,12 +183,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "FR Wheel RPM"
                 device.short_name = "FRW_RPM"
             case "RRW_AMB":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "deg C"
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
+                device.units = "C"
                 device.display_name = "RR Wheel Ambient"
                 device.short_name = "RRW_Amb"
             case "RRW_OBJ":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
                 device.display_name = "RR Wheel Object"
                 device.short_name = "RRW_Obj"
@@ -197,12 +197,12 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "RR Wheel RPM"
                 device.short_name = "RRW_RPM"
             case "RLW_AMB":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
-                device.units = "deg C"
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
+                device.units = "C"
                 device.display_name = "RL Wheel Ambient"
                 device.short_name = "RLW_Amb"
             case "RLW_OBJ":
-                device.conversion_factor = lambda v: ((v * 0.02) - 273.15) / 1000
+                device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
                 device.display_name = "RL Wheel Object"
                 device.short_name = "RLW_Obj"
@@ -250,13 +250,13 @@ def configure_devices(devices: List[device_data]) -> None:
 
             case "ECT":
                 device.conversion_factor = lambda v: v - 50
-                device.units = "deg C"
+                device.units = "C"
                 device.display_name = "Engine Coolant Temp"
                 device.short_name = "ECT"
 
             case "OIL_TEMP":
                 device.conversion_factor = lambda v: v - 50
-                device.units = "deg C"
+                device.units = "C"
                 device.display_name = "Engine Oil Temp"
                 device.short_name = "Oil_Tmp"
 
@@ -328,7 +328,7 @@ def configure_devices(devices: List[device_data]) -> None:
 
             case "AN_TEMP_3_":
                 device.conversion_factor = lambda v: v - 50
-                device.units = "deg C"
+                device.units = "C"
                 device.display_name = "AN Temp 3"
                 device.short_name = "AN_T3"
 
