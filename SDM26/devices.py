@@ -118,19 +118,19 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.short_name = "a_Vert"
             case "IMU_X_GYRO":
                 device.signed = True
-                device.conversion_factor = lambda v: (v * 17.50)
+                device.conversion_factor = lambda v: (v * 17.50) / 1000
                 device.units = "deg/s"
                 device.display_name = "r_Pitch"
                 device.short_name = "r_Pitch"
             case "IMU_Y_GYRO":
                 device.signed = True
-                device.conversion_factor = lambda v: (v * 17.50)
+                device.conversion_factor = lambda v: (v * 17.50) / 1000
                 device.units = "deg/s"
                 device.display_name = "r_Roll"
                 device.short_name = "r_Roll"
             case "IMU_Z_GYRO":
                 device.signed = True
-                device.conversion_factor = lambda v: (v * 17.50)
+                device.conversion_factor = lambda v: (v * 17.50) / 1000
                 device.units = "deg/s"
                 device.display_name = "r_Yaw"
                 device.short_name = "r_Yaw"
