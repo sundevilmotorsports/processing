@@ -307,7 +307,7 @@ def convert_csv_file_to_motec(
     for index, (csv_name, display_name, short_name, units) in enumerate(channel_definitions):
         channel = MotecChannel(
             {
-                "name": display_name,
+                "name": csv_name,
                 "shortname": short_name[:8],
                 "units": units,
                 "id": 8000 + index,
