@@ -101,19 +101,19 @@ def configure_devices(devices: List[device_data]) -> None:
             case "a_Lat":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 0.122) / 1000
-                device.units = "g"
+                device.units = "G"
                 device.display_name = "IMU X Accel"
                 device.short_name = "IMU_X"
             case "a_Long":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 0.122) / 1000
-                device.units = "g"
+                device.units = "G"
                 device.display_name = "IMU Y Accel"
                 device.short_name = "IMU_Y"
             case "a_Vert":
                 device.signed = True
                 device.conversion_factor = lambda v: (v * 0.122) / 1000
-                device.units = "g"
+                device.units = "G"
                 device.display_name = "IMU Z Accel"
                 device.short_name = "IMU_Z"
             case "r_Pitch":
@@ -334,19 +334,19 @@ def configure_devices(devices: List[device_data]) -> None:
 
             case "a_Lat_ecu":
                 device.conversion_factor = lambda v: (((v - 65536) if v >= 32768 else v) * 0.001)
-                device.units = "g"
+                device.units = "G"
                 device.display_name = "ECU Lateral Accel"
                 device.short_name = "G_Lat"
 
             case "a_Long_ecu":
                 device.conversion_factor = lambda v: (((v - 65536) if v >= 32768 else v) * 0.001)
-                device.units = "g"
+                device.units = "G"
                 device.display_name = "ECU Longitudinal Accel"
                 device.short_name = "G_Long"
 
             case "a_Vert_ecu":
                 device.conversion_factor = lambda v: (((v - 65536) if v >= 32768 else v) * 0.001)
-                device.units = "g"
+                device.units = "G"
                 device.display_name = "ECU Vertical Accel"
                 device.short_name = "G_Vert"
             case "TESTNO":
@@ -397,6 +397,38 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.units = ""
                 device.display_name = "GPS 1"
                 device.short_name = "GPS_1"
+            case "FLT_TTA":
+                device.units = ""
+                device.display_name = "FL Tire Temp A"
+                device.short_name = "FLT_TTA"
+            case "FLT_TTB":
+                device.units = ""
+                device.display_name = "FL Tire Temp B"
+                device.short_name = "FLT_TTB"
+            case "FRT_TTA":
+                device.units = ""
+                device.display_name = "FR Tire Temp A"
+                device.short_name = "FRT_TTA"
+            case "FRT_TTB":
+                device.units = ""
+                device.display_name = "FR Tire Temp B"
+                device.short_name = "FRT_TTB"
+            case "RLT_TTA":
+                device.units = ""
+                device.display_name = "RL Tire Temp A"
+                device.short_name = "RLT_TTA"
+            case "RLT_TTB":
+                device.units = ""
+                device.display_name = "RL Tire Temp B"
+                device.short_name = "RLT_TTB"
+            case "RRT_TTA":
+                device.units = ""
+                device.display_name = "RR Tire Temp A"
+                device.short_name = "RRT_TTA"
+            case "RRT_TTB":
+                device.units = ""
+                device.display_name = "RR Tire Temp B"
+                device.short_name = "RRT_TTB"
             case "CH_COUNT":
                 device.units = ""
                 device.display_name = "Channel Count"
