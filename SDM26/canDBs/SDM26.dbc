@@ -1,0 +1,135 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: ECU RearLeftStrainGauge RearRightStrainGauge FrontRightStrainGauge FrontLeftStrainGauge RearLeftWheelBoard RearRightWheelBoard FrontRightWheelBoard FrontLeftWheelBoard Logger IMU
+
+
+BO_ 1000 ENGINE: 7 ECU
+ SG_ ENGINE_aps m2 : 8|8@1- (1,0) [0|0] ""  Logger
+ SG_ ENGINE_Driven_wspd m1 : 32|16@1+ (1,0) [0|65535] ""  Logger
+ SG_ ENGINE_tps m1 : 16|8@1- (1,0) [0|0] ""  Logger
+ SG_ ENGINE_OilPressure m0 : 40|16@1- (1,0) [0|0] ""  Logger
+ SG_ ENGINE_OilTemp m0 : 32|8@1- (1,0) [0|0] ""  Logger
+ SG_ ENGINE_ect m0 : 24|8@1- (1,0) [0|0] ""  Logger
+ SG_ ENGINE_Speed m0 : 8|16@1+ (1,0) [0|0] ""  Logger
+ SG_ ENGINE_Mux M : 0|8@1+ (1,0) [0|0] ""  Logger
+
+BO_ 64 SHIFTER: 3 ECU
+ SG_ SHIFTER_Shift2 : 16|8@1- (1,0) [0|0] ""  Logger
+ SG_ SHIFTER_Shift1 : 8|8@1- (1,0) [0|0] ""  Logger
+ SG_ SHIFTER_Shift0 : 0|8@1- (1,0) [0|0] ""  Logger
+
+BO_ 1253 RLSG: 2 RearLeftStrainGauge
+ SG_ RLSG_Strain : 0|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1252 RRSG: 2 RearRightStrainGauge
+ SG_ RRSG_Strain : 0|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1251 FRSG: 2 FrontRightStrainGauge
+ SG_ FRSG_Strain : 0|16@1- (1,0) [0|0] ""  Logger
+
+BO_ 1250 FLSG: 2 FrontLeftStrainGauge
+ SG_ FLSG_Strain : 0|16@1+ (1,0) [0|0] ""  Logger
+
+BO_ 870 RLWB: 6 RearLeftWheelBoard
+ SG_ RLWB_AmbTemp : 32|16@1- (1,0) [0|0] "°C"  Logger
+ SG_ RLWB_ObjTemp : 16|16@1- (1,0) [0|0] "°C"  Logger
+ SG_ RLWB_rpm : 0|16@1+ (1,0) [0|0] "rpm"  Logger
+
+BO_ 869 RRWB: 6 RearRightWheelBoard
+ SG_ RRWB_AmbTemp : 32|16@1- (1,0) [0|0] "°C"  Logger
+ SG_ RRWB_ObjTemp : 16|16@1- (1,0) [0|0] "°C"  Logger
+ SG_ RRWB_rpm : 0|16@1+ (1,0) [0|0] "rpm"  Logger
+
+BO_ 868 FRWB: 6 FrontRightWheelBoard
+ SG_ FRWB_AmbTemp : 32|16@1+ (0.02,-273.15) [-273.15|1037.55] "°C"  Logger
+ SG_ FRWB_ObjTemp : 16|16@1+ (0.02,-273.15) [-273.15|1037.55] "°C"  Logger
+ SG_ FRWB_rpm : 0|16@1+ (1,0) [0|0] "rpm"  Logger
+
+BO_ 867 FLWB: 6 FrontLeftWheelBoard
+ SG_ FLWB_AmbTemp : 32|16@1- (1,0) [0|0] "°C"  Logger
+ SG_ FLWB_ObjTemp : 16|16@1- (1,0) [0|0] "°C"  Logger
+ SG_ FLWB_rpm : 0|16@1+ (1,0) [0|0] "rpm"  Logger
+
+BO_ 865 IMU_ACCEL: 6 IMU
+ SG_ IMU_ACCEL_Z : 32|16@1- (0.122,0) [-3997.696|3997.574] "mg"  Logger
+ SG_ IMU_ACCEL_Y : 16|16@1- (0.122,0) [-3997.696|3997.574] "mg"  Logger
+ SG_ IMU_ACCEL_X : 0|16@1- (0.122,0) [-3997.696|3997.574] "mg"  Logger
+
+BO_ 864 IMU_GYRO: 6 IMU
+ SG_ IMU_GYRO_Z : 32|16@1- (17.5,0) [-573440|573422.5] "mdps"  Logger
+ SG_ IMU_GYRO_Y : 16|16@1- (17.5,0) [-573440|573422.5] "mdps"  Logger
+ SG_ IMU_GYRO_X : 0|16@1- (17.5,0) [-573440|573422.5] "mdps"  Logger
+
+
+
+CM_ BO_ 1253 "Rear Left String Gauge";
+CM_ SG_ 1253 RLSG_Strain "Rear Left Strain Gauge";
+CM_ BO_ 1252 "Rear Right String Gauge";
+CM_ SG_ 1252 RRSG_Strain "Rear Right Strain Gauge";
+CM_ BO_ 1251 "Front Right String Gauge";
+CM_ SG_ 1251 FRSG_Strain "Front Right Strain Gauge";
+CM_ BO_ 1250 "Front Left String Gauge";
+CM_ SG_ 1250 FLSG_Strain "Front Left Strain Gauge";
+CM_ BO_ 870 "Rear Left Wheel Board";
+CM_ SG_ 870 RLWB_AmbTemp "Rear Left Wheel Board Ambient Temperature";
+CM_ SG_ 870 RLWB_ObjTemp "Rear Left Wheel Board Object Temperature";
+CM_ SG_ 870 RLWB_rpm "Rear Left Wheel RPM";
+CM_ BO_ 869 "Rear Right Wheel Board";
+CM_ SG_ 869 RRWB_AmbTemp "Rear Right Wheel Board Ambient Temperature";
+CM_ SG_ 869 RRWB_ObjTemp "Rear Right Wheel Board Object Temperature";
+CM_ SG_ 869 RRWB_rpm "Rear Right Wheel RPM";
+CM_ BO_ 868 "Front Right Wheel Board";
+CM_ SG_ 868 FRWB_AmbTemp "Front Right Wheel Board Ambient Temperature";
+CM_ SG_ 868 FRWB_ObjTemp "Front Right Wheel Board Object Temperature";
+CM_ SG_ 868 FRWB_rpm "Front Right Wheel RPM";
+CM_ BO_ 867 "Front Left Wheel Board";
+CM_ SG_ 867 FLWB_AmbTemp "Front Left Wheel Board Ambient Temperature";
+CM_ SG_ 867 FLWB_ObjTemp "Front Left Wheel Board Object Temperature";
+CM_ SG_ 867 FLWB_rpm "Front Left Wheel RPM";
+CM_ BO_ 865 "IMU Accelerometer";
+CM_ SG_ 865 IMU_ACCEL_Z "Linear Acceleration Z";
+CM_ SG_ 865 IMU_ACCEL_Y "Linear Acceleration Y";
+CM_ SG_ 865 IMU_ACCEL_X "Linear Acceleration X";
+CM_ BO_ 864 "IMU Gyroscope";
+CM_ SG_ 864 IMU_GYRO_Z "Angular Velocity Z";
+CM_ SG_ 864 IMU_GYRO_Y "Angular Velocity Y
+";
+CM_ SG_ 864 IMU_GYRO_X "Angular Velocity X";
+BA_DEF_  "MultiplexExtEnabled" ENUM  "No","Yes";
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "MultiplexExtEnabled" "No";
+BA_DEF_DEF_  "BusType" "CAN";
+

@@ -1,0 +1,115 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: 
+
+
+BO_ 865 IMU_ACCEL: 8 Vector__XXX
+ SG_ IMU_ACCEL_Z : 32|16@1- (0.000122,0) [0|0] "G" Vector__XXX
+ SG_ IMU_ACCEL_Y : 16|16@1- (0.000122,0) [0|0] "G" Vector__XXX
+ SG_ IMU_ACCEL_X : 0|16@1- (0.000122,0) [0|0] "G" Vector__XXX
+
+BO_ 864 IMU_GYRO: 8 Vector__XXX
+ SG_ IMU_GYRO_Z : 32|16@1- (17.5,0) [0|0] "mdps" Vector__XXX
+ SG_ IMU_GYRO_Y : 16|16@1- (17.5,0) [0|0] "mdps" Vector__XXX
+ SG_ IMU_GYRO_X : 0|16@1- (17.5,0) [0|0] "mdps" Vector__XXX
+
+BO_ 867 FLWB: 8 Vector__XXX
+ SG_ FLWB_AmbTemp : 32|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ FLWB_ObjTemp : 16|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ FLWB_rpm : 0|16@1+ (1,0) [0|0] "rpm" Vector__XXX
+
+BO_ 868 FRWB: 8 Vector__XXX
+ SG_ FRWB_AmbTemp : 32|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ FRWB_ObjTemp : 16|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ FRWB_rpm : 0|16@1+ (1,0) [0|0] "rpm" Vector__XXX
+
+BO_ 869 RRWB: 8 Vector__XXX
+ SG_ RRWB_AmbTemp : 32|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ RRWB_ObjTemp : 16|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ RRWB_rpm : 0|16@1+ (1,0) [0|0] "rpm" Vector__XXX
+
+BO_ 870 RLWB: 8 Vector__XXX
+ SG_ RLWB_AmbTemp : 32|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ RLWB_ObjTemp : 16|16@1+ (2e-05,-0.27315) [0|0] "kC" Vector__XXX
+ SG_ RLWB_rpm : 0|16@1+ (1,0) [0|0] "rpm" Vector__XXX
+
+BO_ 1250 FLSG: 8 Vector__XXX
+ SG_ FLSG_Strain : 0|16@1+ (-11052026.1,2606.22253) [0|0] "" Vector__XXX
+
+BO_ 1251 FRSG: 8 Vector__XXX
+ SG_ FRSG_Strain : 0|16@1- (1,0) [0|0] "" Vector__XXX
+
+BO_ 1252 RRSG: 8 Vector__XXX
+ SG_ RRSG_Strain : 0|16@1- (1,0) [0|0] "" Vector__XXX
+
+BO_ 1253 RLSG: 8 Vector__XXX
+ SG_ RLSG_Strain : 0|16@1- (-1401922.44,92026.0137) [0|0] "" Vector__XXX
+
+BO_ 1000 ENGINE: 8 Vector__XXX
+ SG_ ENGINE_OilPressure m0 : 40|16@1- (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_Driven_wspd m1 : 32|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_OilTemp m0 : 32|8@1- (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_ect m0 : 24|8@1- (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_tps m1 : 16|8@1- (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_aps m2 : 8|8@1- (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_Speed m0 : 8|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ENGINE_Mux M : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 64 SHIFTER: 8 Vector__XXX
+ SG_ SHIFTER_Shift2 : 16|8@1- (1,0) [0|0] "" Vector__XXX
+ SG_ SHIFTER_Shift1 : 8|8@1- (1,0) [0|0] "" Vector__XXX
+ SG_ SHIFTER_Shift0 : 0|8@1- (1,0) [0|0] "" Vector__XXX
+
+BO_ 900 STEERING_DATA: 8 Vector__XXX
+ SG_ STEERING : 0|16@1+ (0.084769,-152.846451) [0|0] "deg" Vector__XXX
+
+BO_ 901 SHOCK_DATA: 8 Vector__XXX
+ SG_ RRSHOCK : 48|16@1+ (-0.018498,76.591013) [0|0] "mm" Vector__XXX
+ SG_ RLSHOCK : 32|16@1+ (-0.0186,76.618397) [0|0] "mm" Vector__XXX
+ SG_ FRSHOCK : 16|16@1+ (-0.018444,75.894221) [0|0] "mm" Vector__XXX
+ SG_ FLSHOCK : 0|16@1+ (-0.018586,76.399026) [0|0] "mm" Vector__XXX
+
+
+
+
+
+
+
+
+
+
+
+
