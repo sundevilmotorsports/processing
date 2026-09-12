@@ -157,8 +157,8 @@ def configure_devices(devices: List[device_data]) -> None:
             case "t_FL_amb":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = "C"
-                device.display_name = "t_FL_Amb"
-                device.short_name = "t_FL_Amb"
+                device.display_name = "t_FL_amb"
+                device.short_name = "t_FL_amb"
             case "FLW_OBJ":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
@@ -171,8 +171,8 @@ def configure_devices(devices: List[device_data]) -> None:
             case "t_FR_amb":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = "C"
-                device.display_name = "t_FR_Amb"
-                device.short_name = "t_FR_Amb"
+                device.display_name = "t_FR_amb"
+                device.short_name = "t_FR_amb"
             case "FRW_OBJ":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
@@ -185,8 +185,8 @@ def configure_devices(devices: List[device_data]) -> None:
             case "t_RR_amb":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = "C"
-                device.display_name = "t_RR_Amb"
-                device.short_name = "t_RR_Amb"
+                device.display_name = "t_RR_amb"
+                device.short_name = "t_RR_amb"
             case "RRW_OBJ":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
@@ -199,8 +199,8 @@ def configure_devices(devices: List[device_data]) -> None:
             case "t_RL_amb":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = "C"
-                device.display_name = "t_RL_Amb"
-                device.short_name = "t_RL_Amb"
+                device.display_name = "t_RL_amb"
+                device.short_name = "t_RL_amb"
             case "RLW_OBJ":
                 device.conversion_factor = lambda v: v#((v * 0.02) - 273.15) / 1000
                 device.units = ""
@@ -228,8 +228,8 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.short_name = "DRS"
             case "gps_Long":
                 device.units = "deg"
-                device.display_name = "gps_Lon"
-                device.short_name = "gps_Lon"
+                device.display_name = "gps_Long"
+                device.short_name = "gps_Long"
             case "gps_Lat":
                 device.units = "deg"
                 device.display_name = "gps_Lat"
