@@ -308,6 +308,84 @@ def configure_devices(devices: List[device_data]) -> None:
                 device.display_name = "Fuel Pressure"
                 device.short_name = "Fuel_Prs"
 
+            case "n_knock_count":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Knock Count Global"
+                device.short_name = "Knock_Cnt"
+
+            case "d_ign_angle":
+                device.conversion_factor = lambda v: v
+                device.units = "deg"
+                device.display_name = "Ignition Angle"
+                device.short_name = "Ign_Angle"
+
+            case "%_ign_cut":
+                device.conversion_factor = lambda v: v
+                device.units = "%"
+                device.display_name = "Ignition Cut"
+                device.short_name = "Ign_Cut"
+
+            case "%_fuel_cut":
+                device.conversion_factor = lambda v: v
+                device.units = "%"
+                device.display_name = "Fuel Cut"
+                device.short_name = "Fuel_Cut"
+
+            case "r_idle_target":
+                device.conversion_factor = lambda v: v
+                device.units = "rpm"
+                device.display_name = "Idle Target"
+                device.short_name = "Idle_Tgt"
+
+            case "%_lambda_corr":
+                device.conversion_factor = lambda v: v
+                device.units = "%"
+                device.display_name = "CL Lambda Fuel Corr"
+                device.short_name = "Lam_Corr"
+
+            case "Lambda_Target_Err":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Lambda Target Error"
+                device.short_name = "Lam_Err"
+
+            case "in_gear":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "In Driving Gear"
+                device.short_name = "In_Gear"
+
+            case "upshift_act":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Aux 5 - UpShift Actuator"
+                device.short_name = "UpShift"
+
+            case "downshift_act":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Aux 8 - DownShift Actuator"
+                device.short_name = "DnShift"
+
+            case "launch_ctrl_stat":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Launch Control Status"
+                device.short_name = "Launch"
+
+            case "eng_fan_1":
+                device.conversion_factor = lambda v: v
+                device.units = ""
+                device.display_name = "Engine Fan 1"
+                device.short_name = "Eng_Fan1"
+
+            case "%_fuel_left":
+                device.conversion_factor = lambda v: v
+                device.units = "%"
+                device.display_name = "Fuel Left"
+                device.short_name = "Fuel_Lvl"
+
             case "t_fuel_accel":
                 device.conversion_factor = lambda v: 0.001 * v
                 device.units = "ms"
