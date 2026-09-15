@@ -214,6 +214,15 @@ def is_synthetic_csv_column(header_name: str) -> bool:
     return not normalized or normalized == "sample" or normalized.startswith("unnamed:")
 
 
+# Real data channels that should still land in the CSV but are not meaningful
+# as a MoTeC channel (e.g. per-boot diagnostic values rather than a sampled signal).
+MOTEC_EXCLUDED_CHANNELS = {"reset_reason"}
+
+
+def is_motec_excluded_column(header_name: str) -> bool:
+    return header_name.strip().lower() in MOTEC_EXCLUDED_CHANNELS
+
+
 def infer_sample_rate(
     header: list[str],
     data: list[list[str]],
@@ -271,7 +280,11 @@ def convert_csv_file_to_motec(
     header = [column.strip() for column in header]
     header_map = {column.lower(): index for index, column in enumerate(header)} if header else {}
 
-    device_names = [column for column in header if not is_synthetic_csv_column(column)]
+    device_names = [
+        column
+        for column in header
+        if not is_synthetic_csv_column(column) and not is_motec_excluded_column(column)
+    ]
     devices = create_devices(device_names, [4] * len(device_names))
     configure_devices(devices)
     channel_definitions = generate_channel_list(devices)
